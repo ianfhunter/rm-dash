@@ -110,7 +110,18 @@
     if (!ws) throw new Error("The workbook has no sheets.");
     var aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "", raw: false });
     if (!aoa.length) throw new Error("The sheet is empty.");
-    var hdrs = uniqueHeaders(aoa[0]);
+    var headerRow = aoa[0];
+    var visibleColIdx = [];
+    var i;
+    for (i = 0; i < headerRow.length; i++) {
+      var rawH = headerRow[i];
+      if (rawH != null && String(rawH).trim() !== "") visibleColIdx.push(i);
+    }
+    var headerNames = [];
+    for (i = 0; i < visibleColIdx.length; i++) {
+      headerNames.push(String(headerRow[visibleColIdx[i]]).trim());
+    }
+    var hdrs = uniqueHeaders(headerNames);
     var ck = findCostKey(hdrs);
     var rows = [];
     for (var r = 1; r < aoa.length; r++) {
@@ -124,7 +135,12 @@
         }
       }
       if (empty) continue;
-      var obj = rowToObject(hdrs, line);
+      var cells = [];
+      for (i = 0; i < visibleColIdx.length; i++) {
+        var ci = visibleColIdx[i];
+        cells.push(ci < line.length ? line[ci] : "");
+      }
+      var obj = rowToObject(hdrs, cells);
       obj._sheetRow = r + 1;
       rows.push(obj);
     }
@@ -294,6 +310,7 @@
       );
       actTd.appendChild(addBtn);
       tr.appendChild(actTd);
+      tbody.appendChild(tr);
     }
 
     pagEl.hidden = data.length === 0;
