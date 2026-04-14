@@ -143,11 +143,50 @@
 
     <section id="panel-staff" class="panel" role="tabpanel" aria-labelledby="tab-staff" hidden>
       <div class="panel-inner">
-        <div class="card construction">
-          <span class="construction-icon" aria-hidden="true">📜</span>
+        <header class="panel-head">
           <h2>Staff Points</h2>
-          <p class="banner">Under construction</p>
-          <p>The rookery ledger is still being inked. Perch here again soon.</p>
+          <p class="lede">
+            Look up your balance from the
+            <a href="https://spark-lamprey-fd4.notion.site/Staff-Point-Totals-273b85f5f93180a3a0ede17565995097" target="_blank" rel="noopener noreferrer">Staff Point Totals</a>
+            roster (published sheet). Matching ignores letter case.
+          </p>
+        </header>
+
+        <div class="card staff-controls">
+          <div class="staff-lookup-row">
+            <label class="field staff-username-field">
+              <span>Username</span>
+              <input type="text" id="staff-username" name="staffUsername" autocomplete="username" placeholder="e.g. boopyboop." />
+            </label>
+            <button type="button" class="btn primary" id="staff-lookup">Look up</button>
+          </div>
+          <p class="hint staff-hint">Uses the same <strong>Name</strong> column as the staff roster export.</p>
+          <div id="staff-status" class="staff-status" role="status" aria-live="polite"></div>
+          <div id="staff-error" class="alert error" hidden></div>
+        </div>
+
+        <div id="staff-balance-wrap" class="card staff-balance-card" hidden>
+          <p class="staff-balance-line">
+            <strong>Current staff points:</strong>
+            <span id="staff-balance" class="staff-balance-value"></span>
+            <span class="muted">SP</span>
+          </p>
+        </div>
+
+        <div class="card staff-rewards-card">
+          <h3 class="staff-rewards-title">Rewards</h3>
+          <p class="hint staff-rewards-hint">Rows you cannot afford yet are dimmed like sealed scrolls.</p>
+          <div class="staff-table-scroll">
+            <table class="staff-rewards-table" aria-label="Staff point rewards">
+              <thead>
+                <tr>
+                  <th scope="col">Reward</th>
+                  <th scope="col">Cost</th>
+                </tr>
+              </thead>
+              <tbody id="staff-rewards-tbody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
@@ -161,5 +200,6 @@
   <script src="assets/js/tabs.js"></script>
   <script src="assets/js/boopsum.js"></script>
   <script src="assets/js/loot.js"></script>
+  <script src="assets/js/staff.js"></script>
 </body>
 </html>
