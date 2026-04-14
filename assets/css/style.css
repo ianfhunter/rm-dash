@@ -125,6 +125,10 @@ main {
   margin: 0 auto 3rem;
 }
 
+body.tab-loot main {
+  max-width: min(96rem, 100%);
+}
+
 .panel {
   display: none;
 }
@@ -392,4 +396,273 @@ main {
 small {
   font-size: 0.85em;
   opacity: 0.9;
+}
+
+.loot-panel-inner {
+  max-width: 100%;
+}
+
+.loot-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .loot-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.loot-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.loot-controls .loot-budget-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.loot-budget-field {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.loot-hint {
+  margin: 0.75rem 0 0;
+}
+
+.loot-status {
+  margin-top: 0.75rem;
+  font-size: 1rem;
+  color: var(--parchment-muted);
+}
+
+.loot-table-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.loot-table-scroll {
+  overflow-x: auto;
+  max-height: min(70vh, 42rem);
+  overflow-y: auto;
+}
+
+.loot-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.loot-table th,
+.loot-table td {
+  padding: 0.45rem 0.65rem;
+  border-bottom: 1px solid rgba(201, 162, 39, 0.12);
+  vertical-align: top;
+  text-align: left;
+  max-width: 14rem;
+}
+
+.loot-table thead tr:first-child th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: linear-gradient(180deg, rgba(42, 31, 53, 0.98), rgba(22, 18, 28, 0.95));
+  box-shadow: 0 1px 0 rgba(201, 162, 39, 0.12);
+}
+
+.loot-table thead tr:nth-child(2) th {
+  position: sticky;
+  top: 2.35rem;
+  z-index: 2;
+  background: rgba(22, 18, 28, 0.96);
+  box-shadow: 0 1px 0 rgba(201, 162, 39, 0.12);
+}
+
+.loot-th-btn {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  font-family: "Cinzel", serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+  max-width: 100%;
+}
+
+.loot-th-btn:hover {
+  color: var(--parchment);
+}
+
+.loot-sort-ind {
+  color: var(--parchment-muted);
+  font-size: 0.65rem;
+}
+
+.loot-filter-input {
+  width: 100%;
+  min-width: 5rem;
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid rgba(201, 162, 39, 0.2);
+  background: rgba(12, 10, 15, 0.85);
+  color: var(--parchment);
+}
+
+.loot-filter-input:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+
+.loot-table td a {
+  color: #c4b4e8;
+  word-break: break-all;
+}
+
+.loot-table td a:hover {
+  color: var(--parchment);
+}
+
+.loot-actions-head {
+  width: 7.5rem;
+  max-width: 7.5rem;
+  text-align: center;
+}
+
+.loot-actions-cell {
+  max-width: 7.5rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.loot-add-btn {
+  font-size: 0.65rem;
+  padding: 0.35rem 0.5rem;
+  white-space: normal;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.loot-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-top: 1px solid rgba(201, 162, 39, 0.15);
+  background: rgba(12, 10, 15, 0.5);
+}
+
+.loot-pag-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.loot-pag-meta {
+  font-size: 0.9rem;
+  color: var(--parchment-muted);
+}
+
+.loot-pag-info {
+  font-size: 0.95rem;
+}
+
+.loot-cart {
+  position: sticky;
+  top: 1rem;
+  display: flex;
+  flex-direction: column;
+  max-height: min(80vh, 36rem);
+}
+
+.loot-cart-head h3 {
+  margin: 0;
+  font-family: "Cinzel", serif;
+  color: var(--gold);
+  font-size: 1.1rem;
+}
+
+.loot-cart-hint {
+  margin: 0.35rem 0 0.75rem;
+}
+
+.loot-cart-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.loot-cart-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.35rem;
+  border-radius: 8px;
+  background: rgba(12, 10, 15, 0.45);
+  border: 1px solid rgba(201, 162, 39, 0.12);
+}
+
+.loot-cart-item-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.loot-cart-item-name {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.loot-cart-item-meta {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  color: var(--parchment-muted);
+}
+
+.loot-cart-remove {
+  flex-shrink: 0;
+  padding: 0.2rem 0.45rem;
+  min-width: 2rem;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.loot-cart-footer {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(201, 162, 39, 0.2);
+}
+
+.loot-cart-total {
+  margin: 0 0 0.65rem;
+  font-size: 1.05rem;
+}
+
+@media (max-width: 960px) {
+  .loot-cart {
+    position: relative;
+    top: auto;
+    max-height: none;
+  }
 }
