@@ -8,14 +8,15 @@
   var statusEl = document.getElementById("loot-status");
   var errEl = document.getElementById("loot-error");
   var tableWrap = document.getElementById("loot-table-wrap");
-  var thead = document.getElementById("loot-thead");
+  var headerRowEl = document.getElementById("loot-header-row");
+  var filterRowEl = document.getElementById("loot-filter-row");
   var tbody = document.getElementById("loot-tbody");
   var pagEl = document.getElementById("loot-pagination");
   var cartList = document.getElementById("loot-cart-list");
   var cartTotalEl = document.getElementById("loot-cart-total");
   var cartClear = document.getElementById("loot-cart-clear");
 
-  if (!searchBtn || !budgetInput) return;
+  if (!searchBtn || !budgetInput || !headerRowEl || !filterRowEl || !tbody) return;
 
   var workbookCache = null;
   var headers = [];
@@ -199,9 +200,10 @@
     var start = (page - 1) * PAGE_SIZE;
     var slice = data.slice(start, start + PAGE_SIZE);
 
-    thead.innerHTML = "";
-    var trh = document.createElement("tr");
-    var trf = document.createElement("tr");
+    headerRowEl.innerHTML = "";
+    filterRowEl.innerHTML = "";
+    var trh = headerRowEl;
+    var trf = filterRowEl;
     for (var i = 0; i < headers.length; i++) {
       var key = headers[i];
       if (key.charAt(0) === "_") continue;
@@ -267,9 +269,6 @@
     thActF.className = "loot-actions-head";
     thActF.textContent = "";
     trf.appendChild(thActF);
-    thead.appendChild(trh);
-    thead.appendChild(trf);
-
     tbody.innerHTML = "";
     for (var r = 0; r < slice.length; r++) {
       var row = slice[r];
