@@ -4,6 +4,7 @@
     boopsum: document.getElementById("panel-boopsum"),
     loot: document.getElementById("panel-loot"),
     staff: document.getElementById("panel-staff"),
+    questinfo: document.getElementById("panel-questinfo"),
   };
 
   function activate(name) {

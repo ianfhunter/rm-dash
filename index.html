@@ -23,6 +23,7 @@
       <button type="button" class="tab is-active" role="tab" id="tab-boopsum" aria-selected="true" aria-controls="panel-boopsum" data-tab="boopsum">BoopSum</button>
       <button type="button" class="tab" role="tab" id="tab-loot" aria-selected="false" aria-controls="panel-loot" data-tab="loot">Loot</button>
       <button type="button" class="tab" role="tab" id="tab-staff" aria-selected="false" aria-controls="panel-staff" data-tab="staff">Staff Points</button>
+      <button type="button" class="tab" role="tab" id="tab-questinfo" aria-selected="false" aria-controls="panel-questinfo" data-tab="questinfo">Quest Info</button>
     </nav>
   </header>
 
@@ -151,6 +152,61 @@
         </div>
       </div>
     </section>
+
+    <section id="panel-questinfo" class="panel" role="tabpanel" aria-labelledby="tab-questinfo" hidden>
+      <div class="panel-inner">
+        <header class="panel-head">
+          <h2>Quest Info</h2>
+          <p class="lede">Mark the nestling trail: rank, format, length, difficulty, and content warnings. The scroll below updates as you choose.</p>
+        </header>
+
+        <div class="card questinfo-form">
+          <fieldset class="questinfo-fieldset">
+            <legend>Rank</legend>
+            <div class="toggle-row" id="qi-rank" role="group" aria-label="Quest rank"></div>
+          </fieldset>
+
+          <fieldset class="questinfo-fieldset">
+            <legend>Type</legend>
+            <div class="toggle-row" id="qi-type" role="group" aria-label="Quest type"></div>
+          </fieldset>
+
+          <fieldset class="questinfo-fieldset">
+            <legend>Length</legend>
+            <div class="toggle-row" id="qi-length" role="group" aria-label="Quest length"></div>
+          </fieldset>
+
+          <fieldset class="questinfo-fieldset">
+            <legend>Difficulty</legend>
+            <div class="toggle-row" id="qi-difficulty" role="group" aria-label="Quest difficulty"></div>
+          </fieldset>
+
+          <fieldset class="questinfo-fieldset questinfo-cw-fieldset">
+            <legend>Content warnings</legend>
+            <p class="hint questinfo-cw-hint">Labels from the <a href="https://triggerwarningdatabase.com/masterlist-tw/" rel="noopener noreferrer">Trigger Warning Database</a> master list (local copy in <code>data/content-warnings.csv</code>). Filter and tick any that apply.</p>
+            <div id="qi-cw-status" class="questinfo-cw-status" role="status" aria-live="polite"></div>
+            <label class="field questinfo-cw-filter">
+              <span>Filter warnings</span>
+              <input type="search" id="qi-cw-filter" autocomplete="off" placeholder="Type to narrow the list" />
+            </label>
+            <div class="questinfo-cw-actions">
+              <button type="button" class="btn ghost" id="qi-cw-select-visible">Select visible</button>
+              <button type="button" class="btn ghost" id="qi-cw-clear">Clear all</button>
+            </div>
+            <div id="qi-cw-list" class="questinfo-cw-list"></div>
+          </fieldset>
+        </div>
+
+        <div class="card questinfo-output-card">
+          <h3 class="questinfo-output-title">Markdown</h3>
+          <p class="hint questinfo-output-hint">Copy this block into Discord, a forum post, or your chronicle.</p>
+          <label class="field">
+            <span class="sr-only">Generated markdown</span>
+            <textarea id="qi-md-output" class="questinfo-md-output" readonly rows="14" spellcheck="false"></textarea>
+          </label>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="site-footer">
@@ -161,5 +217,6 @@
   <script src="assets/js/tabs.js"></script>
   <script src="assets/js/boopsum.js"></script>
   <script src="assets/js/loot.js"></script>
+  <script src="assets/js/questinfo.js"></script>
 </body>
 </html>
