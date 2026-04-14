@@ -1,0 +1,470 @@
+(function () {
+  var XLSX_URL = "RMMagicItems.xlsx";
+  var PAGE_SIZE = 100;
+  var CART_STORAGE_KEY = "rm-loot-cart-v1";
+
+  var budgetInput = document.getElementById("loot-budget");
+  var searchBtn = document.getElementById("loot-search");
+  var statusEl = document.getElementById("loot-status");
+  var errEl = document.getElementById("loot-error");
+  var tableWrap = document.getElementById("loot-table-wrap");
+  var thead = document.getElementById("loot-thead");
+  var tbody = document.getElementById("loot-tbody");
+  var pagEl = document.getElementById("loot-pagination");
+  var cartList = document.getElementById("loot-cart-list");
+  var cartTotalEl = document.getElementById("loot-cart-total");
+  var cartClear = document.getElementById("loot-cart-clear");
+
+  if (!searchBtn || !budgetInput) return;
+
+  var workbookCache = null;
+  var headers = [];
+  var costKey = "";
+  var budgetFiltered = [];
+  var sortCol = "";
+  var sortDir = 1;
+  var colFilters = {};
+  var page = 1;
+  var cart = {};
+  var nameKey = "";
+
+  function showError(msg) {
+    errEl.textContent = msg;
+    errEl.hidden = false;
+  }
+
+  function clearError() {
+    errEl.hidden = true;
+    errEl.textContent = "";
+  }
+
+  function setStatus(msg) {
+    statusEl.textContent = msg || "";
+  }
+
+  function parseCost(val) {
+    if (val == null || val === "") return NaN;
+    var n = Number(String(val).replace(/,/g, "").trim());
+    return n;
+  }
+
+  function uniqueHeaders(row) {
+    var seen = {};
+    var out = [];
+    for (var i = 0; i < row.length; i++) {
+      var raw = row[i];
+      var h = raw == null ? "" : String(raw).trim();
+      if (!h) h = "Column " + (i + 1);
+      var base = h;
+      var n = seen[base] || 0;
+      seen[base] = n + 1;
+      if (n > 0) h = base + " (" + (n + 1) + ")";
+      out.push(h);
+    }
+    return out;
+  }
+
+  function findCostKey(hdrs) {
+    for (var i = 0; i < hdrs.length; i++) {
+      var h = String(hdrs[i]).toLowerCase();
+      if (h === "cost (gp)" || /\bcost\b.*\bgp\b/.test(h) || h.replace(/\s/g, "") === "cost(gp)") return hdrs[i];
+    }
+    return "";
+  }
+
+  function findNameKey(hdrs) {
+    for (var i = 0; i < hdrs.length; i++) {
+      var h = String(hdrs[i]).toLowerCase();
+      if (h === "name" || h === "item" || h === "item name") return hdrs[i];
+    }
+    return hdrs[0] || "";
+  }
+
+  function rowToObject(hdrs, arr) {
+    var o = {};
+    for (var i = 0; i < hdrs.length; i++) {
+      o[hdrs[i]] = i < arr.length ? arr[i] : "";
+    }
+    return o;
+  }
+
+  function loadWorkbook() {
+    if (workbookCache) return Promise.resolve(workbookCache);
+    return fetch(XLSX_URL)
+      .then(function (res) {
+        if (!res.ok) throw new Error("Could not load " + XLSX_URL + " (" + res.status + ").");
+        return res.arrayBuffer();
+      })
+      .then(function (buf) {
+        if (typeof XLSX === "undefined" || !XLSX.read) {
+          throw new Error("Spreadsheet library failed to load. Check your network connection.");
+        }
+        workbookCache = XLSX.read(buf, { type: "array" });
+        return workbookCache;
+      });
+  }
+
+  function buildRowsFromSheet(wb) {
+    var name = wb.SheetNames[0];
+    var ws = wb.Sheets[name];
+    if (!ws) throw new Error("The workbook has no sheets.");
+    var aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "", raw: false });
+    if (!aoa.length) throw new Error("The sheet is empty.");
+    var hdrs = uniqueHeaders(aoa[0]);
+    var ck = findCostKey(hdrs);
+    var rows = [];
+    for (var r = 1; r < aoa.length; r++) {
+      var line = aoa[r];
+      if (!line || !line.length) continue;
+      var empty = true;
+      for (var j = 0; j < line.length; j++) {
+        if (String(line[j]).trim() !== "") {
+          empty = false;
+          break;
+        }
+      }
+      if (empty) continue;
+      var obj = rowToObject(hdrs, line);
+      obj._sheetRow = r + 1;
+      rows.push(obj);
+    }
+    return { headers: hdrs, costKey: ck, rows: rows };
+  }
+
+  function cellStr(row, key) {
+    var v = row[key];
+    if (v == null) return "";
+    return String(v);
+  }
+
+  function matchesFilters(row) {
+    var keys = Object.keys(colFilters);
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i];
+      if (k.charAt(0) === "_") continue;
+      var q = colFilters[k];
+      if (!q) continue;
+      var cell = cellStr(row, k).toLowerCase();
+      if (cell.indexOf(q) === -1) return false;
+    }
+    return true;
+  }
+
+  function compareValues(a, b) {
+    var sa = a == null ? "" : String(a);
+    var sb = b == null ? "" : String(b);
+    var na = Number(sa.replace(/,/g, ""));
+    var nb = Number(sb.replace(/,/g, ""));
+    var aNum = !isNaN(na) && sa.trim() !== "";
+    var bNum = !isNaN(nb) && sb.trim() !== "";
+    if (aNum && bNum) return na - nb;
+    return sa.localeCompare(sb, undefined, { sensitivity: "base" });
+  }
+
+  function sortedAndFiltered() {
+    var list = budgetFiltered.filter(matchesFilters);
+    if (sortCol && headers.indexOf(sortCol) !== -1) {
+      list.sort(function (ra, rb) {
+        var c = compareValues(ra[sortCol], rb[sortCol]);
+        return c * sortDir;
+      });
+    }
+    return list;
+  }
+
+  function totalPages(n) {
+    return Math.max(1, Math.ceil(n / PAGE_SIZE));
+  }
+
+  function renderTable() {
+    var data = sortedAndFiltered();
+    var tp = totalPages(data.length);
+    if (page > tp) page = tp;
+    var start = (page - 1) * PAGE_SIZE;
+    var slice = data.slice(start, start + PAGE_SIZE);
+
+    thead.innerHTML = "";
+    var trh = document.createElement("tr");
+    var trf = document.createElement("tr");
+    for (var i = 0; i < headers.length; i++) {
+      var key = headers[i];
+      if (key.charAt(0) === "_") continue;
+      var th = document.createElement("th");
+      th.scope = "col";
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "loot-th-btn";
+      var label = document.createElement("span");
+      label.textContent = key;
+      btn.appendChild(label);
+      if (sortCol === key) {
+        var ind = document.createElement("span");
+        ind.className = "loot-sort-ind";
+        ind.textContent = sortDir > 0 ? " ▲" : " ▼";
+        ind.setAttribute("aria-hidden", "true");
+        btn.appendChild(ind);
+      }
+      btn.addEventListener(
+        "click",
+        (function (col) {
+          return function () {
+            if (sortCol === col) sortDir = -sortDir;
+            else {
+              sortCol = col;
+              sortDir = 1;
+            }
+            page = 1;
+            renderTable();
+          };
+        })(key)
+      );
+      th.appendChild(btn);
+      trh.appendChild(th);
+
+      var thf = document.createElement("th");
+      var inp = document.createElement("input");
+      inp.type = "search";
+      inp.className = "loot-filter-input";
+      inp.placeholder = "Filter…";
+      inp.setAttribute("aria-label", "Filter " + key);
+      inp.value = colFilters[key] || "";
+      inp.addEventListener(
+        "input",
+        (function (col) {
+          return function () {
+            var v = inp.value.trim().toLowerCase();
+            if (v) colFilters[col] = v;
+            else delete colFilters[col];
+            page = 1;
+            renderTable();
+          };
+        })(key)
+      );
+      thf.appendChild(inp);
+      trf.appendChild(thf);
+    }
+    var thAct = document.createElement("th");
+    thAct.className = "loot-actions-head";
+    thAct.textContent = "Cart";
+    trh.appendChild(thAct);
+    var thActF = document.createElement("th");
+    thActF.className = "loot-actions-head";
+    thActF.textContent = "";
+    trf.appendChild(thActF);
+    thead.appendChild(trh);
+    thead.appendChild(trf);
+
+    tbody.innerHTML = "";
+    for (var r = 0; r < slice.length; r++) {
+      var row = slice[r];
+      var tr = document.createElement("tr");
+      for (var c = 0; c < headers.length; c++) {
+        var k = headers[c];
+        if (k.charAt(0) === "_") continue;
+        var td = document.createElement("td");
+        var text = cellStr(row, k);
+        if (/^https?:\/\//i.test(text)) {
+          var a = document.createElement("a");
+          a.href = text;
+          a.textContent = text.length > 48 ? text.slice(0, 45) + "…" : text;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+          td.appendChild(a);
+        } else {
+          td.textContent = text;
+        }
+        tr.appendChild(td);
+      }
+      var id = String(row._sheetRow);
+      var actTd = document.createElement("td");
+      actTd.className = "loot-actions-cell";
+      var addBtn = document.createElement("button");
+      addBtn.type = "button";
+      addBtn.className = "btn ghost loot-add-btn";
+      addBtn.textContent = cart[id] ? "In cart" : "Add to cart";
+      addBtn.disabled = !!cart[id];
+      addBtn.addEventListener(
+        "click",
+        (function (copy, rid) {
+          return function () {
+            addToCart(rid, copy);
+            renderTable();
+          };
+        })(JSON.parse(JSON.stringify(row)), id)
+      );
+      actTd.appendChild(addBtn);
+      tr.appendChild(actTd);
+    }
+
+    pagEl.hidden = data.length === 0;
+    if (!pagEl.hidden) {
+      pagEl.innerHTML =
+        '<div class="loot-pag-info">Showing ' +
+        (data.length ? start + 1 : 0) +
+        "–" +
+        Math.min(start + PAGE_SIZE, data.length) +
+        " of " +
+        data.length +
+        '</div><div class="loot-pag-buttons">' +
+        '<button type="button" class="btn ghost" id="loot-pag-prev">Previous</button>' +
+        '<span class="loot-pag-meta">Page ' +
+        page +
+        " of " +
+        tp +
+        '</span>' +
+        '<button type="button" class="btn ghost" id="loot-pag-next">Next</button></div>';
+      var prev = document.getElementById("loot-pag-prev");
+      var next = document.getElementById("loot-pag-next");
+      prev.disabled = page <= 1;
+      next.disabled = page >= tp;
+      prev.addEventListener("click", function () {
+        if (page > 1) {
+          page--;
+          renderTable();
+        }
+      });
+      next.addEventListener("click", function () {
+        if (page < tp) {
+          page++;
+          renderTable();
+        }
+      });
+    }
+
+    tableWrap.hidden = false;
+  }
+
+  function cartCost(row) {
+    if (!costKey) return 0;
+    var n = parseCost(row[costKey]);
+    return isNaN(n) ? 0 : n;
+  }
+
+  function saveCart() {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+    } catch (e) {}
+  }
+
+  function loadCart() {
+    try {
+      var raw = localStorage.getItem(CART_STORAGE_KEY);
+      if (raw) cart = JSON.parse(raw) || {};
+    } catch (e) {
+      cart = {};
+    }
+  }
+
+  function addToCart(id, row) {
+    cart[id] = { row: row };
+    saveCart();
+    renderCart();
+  }
+
+  function removeFromCart(id) {
+    delete cart[id];
+    saveCart();
+    renderCart();
+    if (tableWrap && !tableWrap.hidden) renderTable();
+  }
+
+  function clearCart() {
+    cart = {};
+    saveCart();
+    renderCart();
+    if (tableWrap && !tableWrap.hidden) renderTable();
+  }
+
+  function renderCart() {
+    cartList.innerHTML = "";
+    var ids = Object.keys(cart);
+    var sum = 0;
+    for (var i = 0; i < ids.length; i++) {
+      var id = ids[i];
+      var entry = cart[id];
+      var rw = entry.row;
+      var nk = nameKey || headers[0] || "";
+      var name = nk ? cellStr(rw, nk) : "";
+      if (!name) name = "Item";
+      var cost = cartCost(rw);
+      sum += cost;
+      var li = document.createElement("li");
+      li.className = "loot-cart-item";
+      var info = document.createElement("div");
+      info.className = "loot-cart-item-info";
+      var title = document.createElement("p");
+      title.className = "loot-cart-item-name";
+      title.textContent = name;
+      var meta = document.createElement("p");
+      meta.className = "loot-cart-item-meta";
+      meta.textContent = cost ? cost + " gp" : "—";
+      info.appendChild(title);
+      info.appendChild(meta);
+      var rm = document.createElement("button");
+      rm.type = "button";
+      rm.className = "btn ghost loot-cart-remove";
+      rm.setAttribute("aria-label", "Remove " + name);
+      rm.textContent = "×";
+      rm.addEventListener(
+        "click",
+        (function (rid) {
+          return function () {
+            removeFromCart(rid);
+          };
+        })(id)
+      );
+      li.appendChild(info);
+      li.appendChild(rm);
+      cartList.appendChild(li);
+    }
+    cartTotalEl.textContent = String(Math.round(sum * 100) / 100);
+  }
+
+  function runSearch() {
+    clearError();
+    var budget = Number(budgetInput.value);
+    if (budgetInput.value.trim() === "" || isNaN(budget) || budget < 0) {
+      showError("Enter a valid budget (0 or more gold pieces).");
+      return;
+    }
+    setStatus("Loading spreadsheet…");
+    searchBtn.disabled = true;
+    loadWorkbook()
+      .then(function (wb) {
+        var built = buildRowsFromSheet(wb);
+        headers = built.headers;
+        costKey = built.costKey;
+        nameKey = findNameKey(headers);
+        if (!costKey) throw new Error('No "Cost (GP)" column found in the first row of the sheet.');
+        var ck = costKey;
+        budgetFiltered = built.rows.filter(function (row) {
+          var c = parseCost(row[ck]);
+          if (isNaN(c)) return false;
+          return c <= budget;
+        });
+        sortCol = headers[0] || "";
+        sortDir = 1;
+        colFilters = {};
+        page = 1;
+        setStatus("Found " + budgetFiltered.length + " items within " + budget + " gp.");
+        renderTable();
+      })
+      .catch(function (e) {
+        showError(e.message || String(e));
+        setStatus("");
+        tableWrap.hidden = true;
+      })
+      .then(function () {
+        searchBtn.disabled = false;
+      });
+  }
+
+  searchBtn.addEventListener("click", runSearch);
+
+  cartClear.addEventListener("click", clearCart);
+
+  loadCart();
+  renderCart();
+  setStatus("Enter a budget and choose Search to load the catalog from the spreadsheet.");
+})();
+

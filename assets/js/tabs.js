@@ -7,6 +7,7 @@
   };
 
   function activate(name) {
+    document.body.classList.toggle("tab-loot", name === "loot");
     tabs.forEach(function (btn) {
       var on = btn.dataset.tab === name;
       btn.classList.toggle("is-active", on);
@@ -19,6 +20,7 @@
       panel.classList.toggle("is-active", on);
       panel.hidden = !on;
     });
+    window.dispatchEvent(new CustomEvent("rmtools-tab", { detail: { tab: name } }));
   }
 
   tabs.forEach(function (btn) {

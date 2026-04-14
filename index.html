@@ -96,13 +96,51 @@
     </section>
 
     <section id="panel-loot" class="panel" role="tabpanel" aria-labelledby="tab-loot" hidden>
-      <div class="panel-inner">
-        <div class="card construction">
-          <span class="construction-icon" aria-hidden="true">🗝️</span>
+      <div class="panel-inner loot-panel-inner">
+        <header class="panel-head">
           <h2>Loot</h2>
-          <p class="banner">Under construction</p>
-          <p>Corvids are sorting the vault. Check back after the next moon.</p>
+          <p class="lede">Browse magic items from the roster spreadsheet by budget. Everything runs in your browser; there is no server.</p>
+        </header>
+
+        <div class="loot-layout">
+          <div class="loot-main">
+            <div class="card loot-controls">
+              <div class="loot-budget-row">
+                <label class="field loot-budget-field">
+                  <span>Budget (GP)</span>
+                  <input type="number" id="loot-budget" min="0" step="1" placeholder="e.g. 500" />
+                </label>
+                <button type="button" class="btn primary" id="loot-search">Search within budget</button>
+              </div>
+              <p class="hint loot-hint">Shows items whose <strong>Cost (GP)</strong> is less than or equal to your budget. Use column filters and header clicks to narrow and sort the list.</p>
+              <div id="loot-status" class="loot-status" role="status" aria-live="polite"></div>
+              <div id="loot-error" class="alert error" hidden></div>
+            </div>
+
+            <div id="loot-table-wrap" class="card loot-table-card" hidden>
+              <div class="loot-table-scroll">
+                <table class="loot-table" id="loot-table">
+                  <thead id="loot-thead"></thead>
+                  <tbody id="loot-tbody"></tbody>
+                </table>
+              </div>
+              <div class="loot-pagination" id="loot-pagination" hidden></div>
+            </div>
+          </div>
+
+          <aside class="loot-cart card" id="loot-cart-panel" aria-labelledby="loot-cart-title">
+            <div class="loot-cart-head">
+              <h3 id="loot-cart-title">Cart</h3>
+            </div>
+            <p class="hint loot-cart-hint">Selected items and running total (GP).</p>
+            <ul class="loot-cart-list" id="loot-cart-list"></ul>
+            <div class="loot-cart-footer">
+              <p class="loot-cart-total"><strong>Total:</strong> <span id="loot-cart-total">0</span> <span class="muted">gp</span></p>
+              <button type="button" class="btn ghost" id="loot-cart-clear">Clear cart</button>
+            </div>
+          </aside>
         </div>
+
       </div>
     </section>
 
@@ -122,7 +160,9 @@
     <p>Static tools for Raven's Mark · GitHub Pages</p>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" crossorigin="anonymous"></script>
   <script src="assets/js/tabs.js"></script>
   <script src="assets/js/boopsum.js"></script>
+  <script src="assets/js/loot.js"></script>
 </body>
 </html>
