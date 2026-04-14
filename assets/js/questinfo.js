@@ -1,5 +1,34 @@
 (function () {
-  var CSV_URL = "data/content-warnings.csv";
+  /**
+   * Resolve repo root for fetch(). A bare path like "data/…" is resolved against the *page* URL.
+   * On GitHub Pages, https://user.github.io/repo-name (no trailing slash) would wrongly request
+   * https://user.github.io/data/… instead of …/repo-name/data/…
+   */
+  function appBaseHref() {
+    var marker = "assets/js/questinfo.js";
+    var scripts = document.getElementsByTagName("script");
+    for (var i = 0; i < scripts.length; i++) {
+      var src = scripts[i].src || "";
+      if (src.indexOf(marker) !== -1) {
+        try {
+          return new URL("../..", src).href;
+        } catch (e) {}
+      }
+    }
+    try {
+      return new URL("./", window.location.href).href;
+    } catch (e2) {
+      return "";
+    }
+  }
+
+  var CSV_URL = (function () {
+    try {
+      return new URL("data/content-warnings.csv", appBaseHref()).href;
+    } catch (e) {
+      return "data/content-warnings.csv";
+    }
+  })();
 
   var RANKS = [
     { id: "hatchling", label: "Hatchling" },
