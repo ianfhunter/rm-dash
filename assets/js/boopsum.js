@@ -1,14 +1,24 @@
 (function () {
-  var DMLimits = [0, 75, 150, 450, 950, 1875, 2250, 3500, 4000, 5250, 3750, 5000, 5000, 6250, 7500, 7500, 10000, 10000, 12500, 12500, 12500];
   var HalfProf = [0, 1, 1, 1, 1, 1.5, 1.5, 1.5, 1.5, 2, 2, 2, 2, 2.5, 2.5, 2.5, 2.5, 3, 3, 3, 3];
   var DMod = [0.5, 0.75, 1];
   var GPMod = [0, 0.1, 0.1, 0.1, 0.1, 0.25, 0.25, 0.25, 0.25, 0.55, 0.55, 0.55, 0.55, 0.8, 0.8, 0.8, 0.8, 1.05, 1.05, 1.05, 1.05];
 
-  var MAX_IDX = DMLimits.length - 1;
+  var MAX_IDX = HalfProf.length - 1;
 
   function clampLevel(n) {
-    var x = Math.max(0, Math.floor(Number(n)) || 0);
+    var x = Math.max(1, Math.floor(Number(n)) || 0);
     return Math.min(x, MAX_IDX);
+  }
+
+  function tierIcon(level) {
+    var L = clampLevel(level);
+    if (L === 1) return { emoji: "🪺", title: "Nestling" };
+    if (L >= 2 && L <= 4) return { emoji: "🐣", title: "Hatchling" };
+    if (L >= 5 && L <= 8) return { emoji: "🐤", title: "Chickling" };
+    if (L >= 9 && L <= 12) return { emoji: "🐦‍⬛", title: "Fledgling" };
+    if (L >= 13 && L <= 16) return { emoji: "🪽", title: "Flier" };
+    if (L >= 17 && L <= 19) return { emoji: "🦅", title: "Soarer" };
+    return { emoji: "🪶", title: "Elder" };
   }
 
   var form = document.getElementById("boopsum-form");
@@ -17,6 +27,8 @@
   var calcBtn = document.getElementById("calc-boopsum");
   var errEl = document.getElementById("boopsum-error");
   var resEl = document.getElementById("boopsum-result");
+  var partySummaryEl = document.getElementById("out-party-summary");
+  var partySummaryTextEl = document.getElementById("out-party-summary-text");
 
   function showError(msg) {
     errEl.textContent = msg;
@@ -29,55 +41,134 @@
     errEl.textContent = "";
   }
 
-  function addRow(value) {
+  function syncRowIcon(row) {
+    var levelInput = row.querySelector(".player-level");
+    var iconEl = row.querySelector(".player-tier-icon");
+    if (!levelInput || !iconEl) return;
+    if (levelInput.value.trim() === "") {
+      iconEl.textContent = "";
+      iconEl.title = "";
+      iconEl.setAttribute("aria-label", "Raven mark tier (enter a level)");
+      return;
+    }
+    var L = clampLevel(levelInput.value);
+    var t = tierIcon(L);
+    iconEl.textContent = t.emoji;
+    iconEl.title = t.title ? t.title + " (level " + L + ")" : "";
+    iconEl.setAttribute("aria-label", iconEl.title || "Raven mark tier");
+  }
+
+  function addRow(character, player, level) {
     var row = document.createElement("div");
     row.className = "player-row";
-    var input = document.createElement("input");
-    input.type = "number";
-    input.min = "0";
-    input.max = String(MAX_IDX);
-    input.step = "1";
-    input.placeholder = "Player level";
-    input.value = value != null ? String(value) : "";
+
+    var icon = document.createElement("span");
+    icon.className = "player-tier-icon";
+    icon.setAttribute("role", "img");
+    icon.setAttribute("aria-hidden", "true");
+
+    function mkField(placeholder, className, name, val) {
+      var wrap = document.createElement("label");
+      wrap.className = "player-field " + className;
+      var span = document.createElement("span");
+      span.className = "sr-only";
+      span.textContent = placeholder;
+      var input = document.createElement("input");
+      input.type = "text";
+      input.className = "player-text";
+      input.placeholder = placeholder;
+      input.autocomplete = "off";
+      if (name) input.name = name;
+      input.value = val != null ? String(val) : "";
+      wrap.appendChild(span);
+      wrap.appendChild(input);
+      return wrap;
+    }
+
+    var charWrap = mkField("Character", "player-field-char", "partyCharacter", character);
+    var playWrap = mkField("Player", "player-field-player", "partyPlayer", player);
+
+    var levelWrap = document.createElement("label");
+    levelWrap.className = "player-field player-field-level";
+    var levelSpan = document.createElement("span");
+    levelSpan.className = "sr-only";
+    levelSpan.textContent = "Level";
+    var levelInput = document.createElement("input");
+    levelInput.type = "number";
+    levelInput.className = "player-level";
+    levelInput.min = "1";
+    levelInput.max = String(MAX_IDX);
+    levelInput.step = "1";
+    levelInput.placeholder = "Level";
+    levelInput.value = level != null && level !== "" ? String(level) : "";
+    levelWrap.appendChild(levelSpan);
+    levelWrap.appendChild(levelInput);
+
+    levelInput.addEventListener("input", function () {
+      syncRowIcon(row);
+    });
+
     var rm = document.createElement("button");
     rm.type = "button";
     rm.className = "btn danger";
     rm.textContent = "Remove";
     rm.addEventListener("click", function () {
       row.remove();
-      if (!rowsEl.querySelector(".player-row")) addRow(3);
+      if (!rowsEl.querySelector(".player-row")) addRow("", "", 3);
     });
-    row.appendChild(input);
+
+    row.appendChild(icon);
+    row.appendChild(charWrap);
+    row.appendChild(playWrap);
+    row.appendChild(levelWrap);
     row.appendChild(rm);
     rowsEl.appendChild(row);
+    syncRowIcon(row);
   }
 
   addBtn.addEventListener("click", function () {
-    addRow("");
+    addRow("", "", "");
   });
 
   if (rowsEl && !rowsEl.querySelector(".player-row")) {
-    addRow(3);
-    addRow(3);
-    addRow(3);
-    addRow(3);
+    addRow("", "", 3);
+    addRow("", "", 3);
+    addRow("", "", 3);
+    addRow("", "", 3);
   }
 
-  function collectLevels() {
-    var inputs = rowsEl.querySelectorAll(".player-row input");
-    var levels = [];
-    inputs.forEach(function (inp) {
-      var v = inp.value.trim();
-      if (v === "") return;
-      levels.push(clampLevel(v));
+  function collectParty() {
+    var rows = rowsEl.querySelectorAll(".player-row");
+    var party = [];
+    rows.forEach(function (row) {
+      var charEl = row.querySelector(".player-field-char .player-text");
+      var playEl = row.querySelector(".player-field-player .player-text");
+      var lvlEl = row.querySelector(".player-level");
+      var lv = lvlEl && lvlEl.value.trim() !== "" ? clampLevel(lvlEl.value) : null;
+      if (lv === null) return;
+      party.push({
+        character: charEl ? charEl.value.trim() : "",
+        player: playEl ? playEl.value.trim() : "",
+        level: lv
+      });
     });
-    return levels;
+    return party;
   }
 
   function fmtList(nums) {
     return nums.map(function (n) {
       return String(n);
     }).join(", ");
+  }
+
+  function partySummaryLine(party) {
+    return party
+      .map(function (p) {
+        var c = p.character || "—";
+        var pl = p.player || "—";
+        return c + "/" + pl;
+      })
+      .join(", ");
   }
 
   calcBtn.addEventListener("click", function () {
@@ -87,14 +178,16 @@
       showError("Enter a valid total adjusted XP (0 or greater).");
       return;
     }
-    var DMLvL = clampLevel(form.dmLevel.value);
-    var PArr = collectLevels();
-    var NParty = PArr.length;
+    var party = collectParty();
+    var NParty = party.length;
     if (NParty === 0) {
-      showError("Add at least one player level.");
+      showError("Add at least one party member with a level.");
       return;
     }
 
+    var PArr = party.map(function (p) {
+      return p.level;
+    });
     var XPArr = PArr.map(function () {
       return Math.floor(totalXp / NParty);
     });
@@ -117,28 +210,6 @@
     var ItemLoot = NewGP_C.reduce(function (a, b) {
       return a + b;
     }, 0);
-    var rankSum = PArr.reduce(function (acc, x) {
-      return acc + Math.ceil(x / 4);
-    }, 0);
-    var rank = rankSum / NParty;
-
-    if (rank >= 7) {
-      showError(
-        "Average rank ceil(level/4) is " +
-          rank.toFixed(2) +
-          ", which hits the original formula boundary (needs rank < 7 for DM XP). Try different levels or party size."
-      );
-      return;
-    }
-
-    var hp = HalfProf[DMLvL];
-    if (hp === 0) {
-      showError("DM level 0 uses a half-proficiency of 0 in the source tables; pick DM level 1 or higher for DM rewards.");
-      return;
-    }
-
-    var DMXP = Math.floor(DMLimits[DMLvL] * (1 / (7 - rank)));
-    var DMGP = Math.floor((DMXP / hp) * DMod[2] * GPMod[DMLvL]);
 
     document.getElementById("out-nparty").textContent = String(NParty);
     document.getElementById("out-levels").textContent = fmtList(LText);
@@ -148,9 +219,9 @@
     document.getElementById("out-gp-b").textContent = fmtList(NewGP_B);
     document.getElementById("out-gp-c").textContent = fmtList(NewGP_C);
     document.getElementById("out-itemloot").textContent = String(ItemLoot);
-    document.getElementById("out-dmlvl").textContent = String(DMLvL);
-    document.getElementById("out-dmxp").textContent = String(DMXP);
-    document.getElementById("out-dmgp").textContent = String(DMGP);
+
+    partySummaryTextEl.textContent = partySummaryLine(party);
+    partySummaryEl.hidden = false;
 
     resEl.hidden = false;
   });

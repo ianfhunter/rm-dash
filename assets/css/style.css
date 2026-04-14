@@ -239,12 +239,46 @@ body.tab-loot main {
 
 .player-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
 }
 
+.player-tier-icon {
+  flex: 0 0 1.75rem;
+  width: 1.75rem;
+  text-align: center;
+  font-size: 1.35rem;
+  line-height: 1;
+  user-select: none;
+}
+
+.player-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1 1 7rem;
+  min-width: 0;
+}
+
+.player-field-level {
+  flex: 0 0 5.25rem;
+}
+
+.player-field span.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .player-row input {
-  flex: 1;
+  width: 100%;
   min-width: 0;
   font: inherit;
   padding: 0.5rem 0.65rem;
@@ -252,6 +286,35 @@ body.tab-loot main {
   border: 1px solid rgba(201, 162, 39, 0.2);
   background: rgba(12, 10, 15, 0.75);
   color: var(--parchment);
+}
+
+.player-row .btn.danger {
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+.party-summary-box {
+  margin-top: 1.25rem;
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(201, 162, 39, 0.35);
+  background: rgba(12, 10, 15, 0.55);
+}
+
+.party-summary-label {
+  margin: 0 0 0.35rem;
+  font-family: "Cinzel", serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+}
+
+.party-summary-text {
+  margin: 0;
+  font-size: 0.98rem;
+  color: var(--parchment);
+  word-break: break-word;
 }
 
 .btn {
