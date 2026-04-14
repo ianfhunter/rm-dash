@@ -167,6 +167,14 @@ body.tab-loot main {
   color: var(--parchment-muted);
 }
 
+.panel-head .lede a {
+  color: #c4b4e8;
+}
+
+.panel-head .lede a:hover {
+  color: var(--parchment);
+}
+
 .card {
   background: linear-gradient(145deg, rgba(42, 31, 53, 0.85), rgba(22, 18, 28, 0.9));
   border: 1px solid rgba(201, 162, 39, 0.2);
@@ -884,4 +892,78 @@ small {
     top: auto;
     max-height: none;
   }
+}
+
+.staff-controls .staff-lookup-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.staff-username-field {
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+
+.staff-hint {
+  margin: 0.75rem 0 0;
+}
+
+.staff-status {
+  margin-top: 0.75rem;
+  font-size: 1rem;
+  color: var(--parchment-muted);
+}
+
+.staff-balance-card .staff-balance-line {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.staff-balance-value {
+  font-family: "Cinzel", serif;
+  color: var(--gold);
+  margin: 0 0.25rem 0 0.35rem;
+}
+
+.staff-rewards-title {
+  margin: 0 0 0.35rem;
+  font-family: "Cinzel", serif;
+  color: var(--gold);
+  font-size: 1.1rem;
+}
+
+.staff-rewards-hint {
+  margin: 0 0 0.85rem;
+}
+
+.staff-table-scroll {
+  overflow-x: auto;
+}
+
+.staff-rewards-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.98rem;
+}
+
+.staff-rewards-table th,
+.staff-rewards-table td {
+  padding: 0.55rem 0.65rem;
+  border-bottom: 1px solid rgba(201, 162, 39, 0.15);
+  text-align: left;
+}
+
+.staff-rewards-table th {
+  font-family: "Cinzel", serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+}
+
+.staff-reward-row.is-unaffordable td {
+  color: var(--feather);
+  opacity: 0.45;
 }
