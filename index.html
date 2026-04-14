@@ -1,1 +1,128 @@
-test 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Raven's Mark Tools</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div class="page-bg" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-icon" aria-hidden="true">🪶</span>
+      <div class="brand-text">
+        <h1>Raven's Mark Tools</h1>
+        <p class="tagline">A roost of small conveniences for the road-worn</p>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Tools">
+      <button type="button" class="tab is-active" role="tab" id="tab-boopsum" aria-selected="true" aria-controls="panel-boopsum" data-tab="boopsum">BoopSum</button>
+      <button type="button" class="tab" role="tab" id="tab-loot" aria-selected="false" aria-controls="panel-loot" data-tab="loot">Loot</button>
+      <button type="button" class="tab" role="tab" id="tab-staff" aria-selected="false" aria-controls="panel-staff" data-tab="staff">Staff Points</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="panel-boopsum" class="panel is-active" role="tabpanel" aria-labelledby="tab-boopsum">
+      <div class="panel-inner">
+        <header class="panel-head">
+          <h2>BoopSum</h2>
+          <p class="lede">Loot calculation for DMs — ported from the familiar tally. Enter <strong>total adjusted XP</strong> for gold; award XP using non-adjusted totals at the table.</p>
+        </header>
+
+        <form id="boopsum-form" class="card form-grid">
+          <label class="field">
+            <span>Total adjusted XP</span>
+            <input type="number" name="totalXp" min="0" step="1" required placeholder="e.g. 12000" />
+          </label>
+          <label class="field">
+            <span>DM level <small>(index into reward tables)</small></span>
+            <input type="number" name="dmLevel" min="0" max="20" step="1" value="0" required />
+          </label>
+        </form>
+
+        <div class="card">
+          <div class="players-head">
+            <h3>Party levels</h3>
+            <button type="button" class="btn ghost" id="add-player">Add player</button>
+          </div>
+          <p class="hint">One row per adventurer. Levels map to the same tables as the original command.</p>
+          <div id="player-rows" class="player-rows"></div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn primary" id="calc-boopsum">Calculate</button>
+        </div>
+
+        <div id="boopsum-error" class="alert error" hidden></div>
+
+        <article id="boopsum-result" class="result card" hidden>
+          <h3 class="result-title">Loot Calculation for DMs</h3>
+
+          <h4>Party make-up</h4>
+          <p><span id="out-nparty"></span> players: <span id="out-levels"></span> <span class="muted">(Avg: <span id="out-apl"></span>)</span></p>
+          <p><strong>Total adjusted XP:</strong> <span id="out-totalxp"></span></p>
+
+          <h4>Experience</h4>
+          <p class="fine-print">Use <strong>total adjusted experience</strong> here so gold lines up. When awarding XP, use the <strong>non-adjusted</strong> value. For a full quest, bonus XP remains at your discretion.</p>
+
+          <h4>Loot</h4>
+          <p class="fine-print">Tune gold to how the session felt:</p>
+          <ul class="loot-list">
+            <li><strong>Quick / low-interaction:</strong> <span id="out-gp-a"></span> <span class="muted">gp each</span></li>
+            <li><strong>Standard:</strong> <span id="out-gp-b"></span> <span class="muted">gp each</span></li>
+            <li><strong>Lore / high-interaction:</strong> <span id="out-gp-c"></span> <span class="muted">gp each</span></li>
+          </ul>
+
+          <h4>Allocations</h4>
+          <ul class="alloc-list">
+            <li><strong>Graveyard:</strong> No gold, no items.</li>
+            <li><strong>Hunt:</strong> Gold as advised; no items.</li>
+            <li><strong>Quest:</strong> Gold as advised. <strong><span id="out-itemloot"></span> gp</strong> worth of items to split.</li>
+          </ul>
+
+          <h4>DM rewards</h4>
+          <p class="fine-print">Based on DM level <strong id="out-dmlvl"></strong>.</p>
+          <ul>
+            <li><strong>DMXP:</strong> <span id="out-dmxp"></span> xp</li>
+            <li><strong>DMGP:</strong> <span id="out-dmgp"></span> gp</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="panel-loot" class="panel" role="tabpanel" aria-labelledby="tab-loot" hidden>
+      <div class="panel-inner">
+        <div class="card construction">
+          <span class="construction-icon" aria-hidden="true">🗝️</span>
+          <h2>Loot</h2>
+          <p class="banner">Under construction</p>
+          <p>Corvids are sorting the vault. Check back after the next moon.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="panel-staff" class="panel" role="tabpanel" aria-labelledby="tab-staff" hidden>
+      <div class="panel-inner">
+        <div class="card construction">
+          <span class="construction-icon" aria-hidden="true">📜</span>
+          <h2>Staff Points</h2>
+          <p class="banner">Under construction</p>
+          <p>The rookery ledger is still being inked. Perch here again soon.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Static tools for Raven's Mark · GitHub Pages</p>
+  </footer>
+
+  <script src="assets/js/tabs.js"></script>
+  <script src="assets/js/boopsum.js"></script>
+</body>
+</html>
