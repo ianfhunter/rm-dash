@@ -10,7 +10,6 @@
   var errEl = document.getElementById("loot-error");
   var tableWrap = document.getElementById("loot-table-wrap");
   var headerRowEl = document.getElementById("loot-header-row");
-  var filterRowEl = document.getElementById("loot-filter-row");
   var tbody = document.getElementById("loot-tbody");
   var pagEl = document.getElementById("loot-pagination");
   var cartList = document.getElementById("loot-cart-list");
@@ -20,18 +19,17 @@
   var checkoutWrap = document.getElementById("loot-checkout-wrap");
   var checkoutOutput = document.getElementById("loot-checkout-output");
 
-  if (!searchBtn || !budgetInput || !headerRowEl || !filterRowEl || !tbody) return;
+  if (!searchBtn || !budgetInput || !headerRowEl || !tbody) return;
 
   var workbookCache = null;
   var headers = [];
   var costKey = "";
   var budgetFiltered = [];
-  var sortCol = "";
-  var sortDir = 1;
-  var colFilters = {};
   var page = 1;
   var cart = {};
   var nameKey = "";
+  var expandedRows = {};
+  var displayKeys = { name: "", type: "", cost: "", attunement: "", a: "", artLink: "", cardLink: "", majorMinor: "", notes: "" };
 
   function showError(msg) {
     errEl.textContent = msg;
@@ -152,45 +150,71 @@
     return { headers: hdrs, costKey: ck, rows: rows };
   }
 
-  function cellStr(row, key) {
-    var v = row[key];
+  function cellStr(row, colKey) {
+    if (!colKey) return "";
+    var v = row[colKey];
     if (v == null) return "";
     return String(v);
   }
 
-  function matchesFilters(row) {
-    var keys = Object.keys(colFilters);
-    for (var i = 0; i < keys.length; i++) {
-      var k = keys[i];
-      if (k.charAt(0) === "_") continue;
-      var q = colFilters[k];
-      if (!q) continue;
-      var cell = cellStr(row, k).toLowerCase();
-      if (cell.indexOf(q) === -1) return false;
-    }
-    return true;
+  function normalizedHeader(s) {
+    return String(s || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
   }
 
-  function compareValues(a, b) {
-    var sa = a == null ? "" : String(a);
-    var sb = b == null ? "" : String(b);
-    var na = Number(sa.replace(/,/g, ""));
-    var nb = Number(sb.replace(/,/g, ""));
-    var aNum = !isNaN(na) && sa.trim() !== "";
-    var bNum = !isNaN(nb) && sb.trim() !== "";
-    if (aNum && bNum) return na - nb;
-    return sa.localeCompare(sb, undefined, { sensitivity: "base" });
+  function keyFor(candidates) {
+    var i;
+    for (i = 0; i < headers.length; i++) {
+      var h = headers[i];
+      if (candidates.indexOf(normalizedHeader(h)) !== -1) return h;
+    }
+    return "";
   }
 
-  function sortedAndFiltered() {
-    var list = budgetFiltered.filter(matchesFilters);
-    if (sortCol && headers.indexOf(sortCol) !== -1) {
-      list.sort(function (ra, rb) {
-        var c = compareValues(ra[sortCol], rb[sortCol]);
-        return c * sortDir;
-      });
+  function setupDisplayKeys() {
+    displayKeys.name = keyFor(["name", "item", "item name"]) || nameKey || headers[0] || "";
+    displayKeys.type = keyFor(["type", "item type"]);
+    displayKeys.cost = costKey;
+    displayKeys.attunement = keyFor(["attunement", "attunement required"]);
+    displayKeys.a = keyFor(["a"]);
+    displayKeys.artLink = keyFor(["art link", "art"]);
+    displayKeys.cardLink = keyFor(["card link", "card"]);
+    displayKeys.majorMinor = keyFor(["major minor", "major minor roll", "major/minor"]);
+    displayKeys.notes = keyFor(["notes", "note"]);
+  }
+
+  function rowsForDisplay() {
+    return budgetFiltered.slice();
+  }
+
+  function makeLinkEl(url, label) {
+    var a = document.createElement("a");
+    a.href = url;
+    a.textContent = label;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    return a;
+  }
+
+  function appendExpandedField(container, label, value, opts) {
+    var val = String(value || "").trim();
+    if (!val) return;
+    var row = document.createElement("div");
+    row.className = "loot-detail-row";
+    var keyEl = document.createElement("span");
+    keyEl.className = "loot-detail-key";
+    keyEl.textContent = label + ": ";
+    row.appendChild(keyEl);
+    if (opts && opts.link && /^https?:\/\//i.test(val)) row.appendChild(makeLinkEl(val, opts.linkLabel || val));
+    else {
+      var text = document.createElement("span");
+      text.className = "loot-detail-value";
+      text.textContent = val;
+      row.appendChild(text);
     }
-    return list;
+    container.appendChild(row);
   }
 
   function totalPages(n) {
@@ -198,103 +222,70 @@
   }
 
   function renderTable() {
-    var data = sortedAndFiltered();
+    var data = rowsForDisplay();
     var tp = totalPages(data.length);
     if (page > tp) page = tp;
     var start = (page - 1) * PAGE_SIZE;
     var slice = data.slice(start, start + PAGE_SIZE);
 
     headerRowEl.innerHTML = "";
-    filterRowEl.innerHTML = "";
-    var trh = headerRowEl;
-    var trf = filterRowEl;
-    for (var i = 0; i < headers.length; i++) {
-      var key = headers[i];
-      if (key.charAt(0) === "_") continue;
+    var mainHeaders = ["Name", "Type", "Cost (GP)", "Cart"];
+    for (var h = 0; h < mainHeaders.length; h++) {
       var th = document.createElement("th");
       th.scope = "col";
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "loot-th-btn";
-      var label = document.createElement("span");
-      label.textContent = key;
-      btn.appendChild(label);
-      if (sortCol === key) {
-        var ind = document.createElement("span");
-        ind.className = "loot-sort-ind";
-        ind.textContent = sortDir > 0 ? " ▲" : " ▼";
-        ind.setAttribute("aria-hidden", "true");
-        btn.appendChild(ind);
-      }
-      btn.addEventListener(
-        "click",
-        (function (col) {
-          return function () {
-            if (sortCol === col) sortDir = -sortDir;
-            else {
-              sortCol = col;
-              sortDir = 1;
-            }
-            page = 1;
-            renderTable();
-          };
-        })(key)
-      );
-      th.appendChild(btn);
-      trh.appendChild(th);
-
-      var thf = document.createElement("th");
-      var inp = document.createElement("input");
-      inp.type = "search";
-      inp.className = "loot-filter-input";
-      inp.placeholder = "Filter…";
-      inp.setAttribute("aria-label", "Filter " + key);
-      inp.value = colFilters[key] || "";
-      inp.addEventListener(
-        "input",
-        (function (col) {
-          return function () {
-            var v = inp.value.trim().toLowerCase();
-            if (v) colFilters[col] = v;
-            else delete colFilters[col];
-            page = 1;
-            renderTable();
-          };
-        })(key)
-      );
-      thf.appendChild(inp);
-      trf.appendChild(thf);
+      th.textContent = mainHeaders[h];
+      if (mainHeaders[h] === "Cart") th.className = "loot-actions-head";
+      headerRowEl.appendChild(th);
     }
-    var thAct = document.createElement("th");
-    thAct.className = "loot-actions-head";
-    thAct.textContent = "Cart";
-    trh.appendChild(thAct);
-    var thActF = document.createElement("th");
-    thActF.className = "loot-actions-head";
-    thActF.textContent = "";
-    trf.appendChild(thActF);
+
     tbody.innerHTML = "";
     for (var r = 0; r < slice.length; r++) {
       var row = slice[r];
-      var tr = document.createElement("tr");
-      for (var c = 0; c < headers.length; c++) {
-        var k = headers[c];
-        if (k.charAt(0) === "_") continue;
-        var td = document.createElement("td");
-        var text = cellStr(row, k);
-        if (/^https?:\/\//i.test(text)) {
-          var a = document.createElement("a");
-          a.href = text;
-          a.textContent = text.length > 48 ? text.slice(0, 45) + "…" : text;
-          a.target = "_blank";
-          a.rel = "noopener noreferrer";
-          td.appendChild(a);
-        } else {
-          td.textContent = text;
-        }
-        tr.appendChild(td);
-      }
       var id = String(row._sheetRow);
+      var tr = document.createElement("tr");
+      tr.className = "loot-row-main";
+      tr.tabIndex = 0;
+      tr.setAttribute("role", "button");
+      tr.setAttribute("aria-expanded", expandedRows[id] ? "true" : "false");
+      tr.setAttribute("aria-controls", "loot-detail-" + id);
+      tr.addEventListener("click", function (evt) {
+        var t = evt.target;
+        if (t && t.closest && t.closest(".loot-actions-cell")) return;
+        var rid = this.getAttribute("data-row-id");
+        expandedRows[rid] = !expandedRows[rid];
+        renderTable();
+      });
+      tr.addEventListener("keydown", function (evt) {
+        if (evt.key !== "Enter" && evt.key !== " ") return;
+        evt.preventDefault();
+        var rid = this.getAttribute("data-row-id");
+        expandedRows[rid] = !expandedRows[rid];
+        renderTable();
+      });
+      tr.setAttribute("data-row-id", id);
+
+      var nameTd = document.createElement("td");
+      var nameWrap = document.createElement("span");
+      nameWrap.className = "loot-name-wrap";
+      var caret = document.createElement("span");
+      caret.className = "loot-expand-ind";
+      caret.setAttribute("aria-hidden", "true");
+      caret.textContent = expandedRows[id] ? "▾" : "▸";
+      var nameText = document.createElement("span");
+      nameText.textContent = cellStr(row, displayKeys.name);
+      nameWrap.appendChild(caret);
+      nameWrap.appendChild(nameText);
+      nameTd.appendChild(nameWrap);
+      tr.appendChild(nameTd);
+
+      var typeTd = document.createElement("td");
+      typeTd.textContent = cellStr(row, displayKeys.type);
+      tr.appendChild(typeTd);
+
+      var costTd = document.createElement("td");
+      costTd.textContent = cellStr(row, displayKeys.cost);
+      tr.appendChild(costTd);
+
       var actTd = document.createElement("td");
       actTd.className = "loot-actions-cell";
       var buyBtn = document.createElement("button");
@@ -325,6 +316,29 @@
       actTd.appendChild(sellBtn);
       tr.appendChild(actTd);
       tbody.appendChild(tr);
+
+      var detailTr = document.createElement("tr");
+      detailTr.id = "loot-detail-" + id;
+      detailTr.className = "loot-row-detail";
+      detailTr.hidden = !expandedRows[id];
+      var detailTd = document.createElement("td");
+      detailTd.colSpan = 4;
+      var detailsWrap = document.createElement("div");
+      detailsWrap.className = "loot-detail-grid";
+
+      appendExpandedField(detailsWrap, "Attunement", cellStr(row, displayKeys.attunement));
+      appendExpandedField(detailsWrap, "A", cellStr(row, displayKeys.a));
+      appendExpandedField(detailsWrap, "Art Link", cellStr(row, displayKeys.artLink), { link: true, linkLabel: "Open art" });
+      appendExpandedField(detailsWrap, "Card Link", cellStr(row, displayKeys.cardLink), { link: true, linkLabel: "Open card" });
+      appendExpandedField(detailsWrap, "Major / Minor", cellStr(row, displayKeys.majorMinor));
+      appendExpandedField(detailsWrap, "Notes", cellStr(row, displayKeys.notes));
+
+      if (!detailsWrap.children.length) {
+        appendExpandedField(detailsWrap, "Details", "No additional details available for this row.");
+      }
+      detailTd.appendChild(detailsWrap);
+      detailTr.appendChild(detailTd);
+      tbody.appendChild(detailTr);
     }
 
     pagEl.hidden = data.length === 0;
@@ -563,9 +577,8 @@
           if (isNaN(c)) return false;
           return showAll || c <= budget;
         });
-        sortCol = headers[0] || "";
-        sortDir = 1;
-        colFilters = {};
+        setupDisplayKeys();
+        expandedRows = {};
         page = 1;
         if (showAll) {
           budgetInput.value = "";

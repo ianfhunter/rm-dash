@@ -764,54 +764,6 @@ small {
   box-shadow: 0 1px 0 rgba(201, 162, 39, 0.12);
 }
 
-.loot-table thead tr:nth-child(2) th {
-  position: sticky;
-  top: 2.35rem;
-  z-index: 2;
-  background: rgba(22, 18, 28, 0.96);
-  box-shadow: 0 1px 0 rgba(201, 162, 39, 0.12);
-}
-
-.loot-th-btn {
-  all: unset;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.15rem;
-  font-family: "Cinzel", serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--gold);
-  max-width: 100%;
-}
-
-.loot-th-btn:hover {
-  color: var(--parchment);
-}
-
-.loot-sort-ind {
-  color: var(--parchment-muted);
-  font-size: 0.65rem;
-}
-
-.loot-filter-input {
-  width: 100%;
-  min-width: 5rem;
-  font: inherit;
-  font-size: 0.85rem;
-  padding: 0.35rem 0.45rem;
-  border-radius: 6px;
-  border: 1px solid rgba(201, 162, 39, 0.2);
-  background: rgba(12, 10, 15, 0.85);
-  color: var(--parchment);
-}
-
-.loot-filter-input:focus {
-  outline: 2px solid var(--gold);
-  outline-offset: 1px;
-}
-
 .loot-table td a {
   color: #c4b4e8;
   word-break: break-all;
@@ -822,13 +774,66 @@ small {
 }
 
 .loot-actions-head {
-  width: 9rem;
-  max-width: 9rem;
+  width: 10rem;
+  max-width: 10rem;
   text-align: center;
 }
 
+.loot-row-main {
+  cursor: pointer;
+}
+
+.loot-row-main:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: -2px;
+}
+
+.loot-row-main:hover td {
+  background: rgba(201, 162, 39, 0.06);
+}
+
+.loot-name-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.loot-expand-ind {
+  font-size: 0.85rem;
+  color: var(--gold);
+  width: 0.7rem;
+}
+
+.loot-row-detail td {
+  background: rgba(12, 10, 15, 0.35);
+  border-bottom: 1px solid rgba(201, 162, 39, 0.18);
+}
+
+.loot-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.4rem 1rem;
+  padding: 0.35rem 0;
+}
+
+.loot-detail-row {
+  font-size: 0.9rem;
+}
+
+.loot-detail-key {
+  color: var(--gold);
+  font-family: "Cinzel", serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.loot-detail-value {
+  color: var(--parchment);
+}
+
 .loot-actions-cell {
-  max-width: 9rem;
+  max-width: 10rem;
   text-align: center;
   white-space: nowrap;
   display: flex;
