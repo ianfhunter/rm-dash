@@ -222,7 +222,13 @@
         <div class="card questinfo-form">
           <fieldset class="questinfo-fieldset">
             <legend>Rank</legend>
-            <div class="toggle-row" id="qi-rank" role="group" aria-label="Quest rank"></div>
+            <div class="questinfo-rank-row">
+              <div class="toggle-row" id="qi-rank" role="group" aria-label="Quest rank"></div>
+              <label class="questinfo-inline-check">
+                <input type="checkbox" id="qi-invite-only" />
+                <span>Invite Only</span>
+              </label>
+            </div>
           </fieldset>
 
           <fieldset class="questinfo-fieldset">
@@ -239,6 +245,11 @@
             <legend>Difficulty</legend>
             <div class="toggle-row" id="qi-difficulty" role="group" aria-label="Quest difficulty"></div>
           </fieldset>
+
+          <label class="field">
+            <span>Quest Line</span>
+            <input type="text" id="qi-quest-line" autocomplete="off" placeholder="e.g. Ashes of Emberwatch" />
+          </label>
 
           <fieldset class="questinfo-fieldset questinfo-cw-fieldset">
             <legend>Content warnings</legend>

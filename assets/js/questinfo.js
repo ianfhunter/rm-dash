@@ -67,12 +67,16 @@
   var cwStatusEl = document.getElementById("qi-cw-status");
   var cwSelectVisibleBtn = document.getElementById("qi-cw-select-visible");
   var cwClearBtn = document.getElementById("qi-cw-clear");
+  var inviteOnlyEl = document.getElementById("qi-invite-only");
+  var questLineEl = document.getElementById("qi-quest-line");
   var mdOutEl = document.getElementById("qi-md-output");
 
   if (!rankEl || !mdOutEl) return;
 
   var state = {
-    rank: "",
+    ranks: {},
+    inviteOnly: false,
+    questLine: "",
     types: {},
     length: "",
     difficulty: "",
@@ -83,6 +87,9 @@
 
   TYPES.forEach(function (t) {
     state.types[t.id] = false;
+  });
+  RANKS.forEach(function (r) {
+    state.ranks[r.id] = false;
   });
 
   function mdEscapeInline(s) {
@@ -142,14 +149,14 @@
     });
   }
 
-  function buildMultiGroup(container, typesState, onToggle) {
+  function buildMultiGroup(container, items, valuesState, onToggle) {
     container.textContent = "";
-    TYPES.forEach(function (item) {
+    items.forEach(function (item) {
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "btn toggle";
       btn.textContent = item.label;
-      var on = !!typesState[item.id];
+      var on = !!valuesState[item.id];
       btn.classList.toggle("is-on", on);
       btn.setAttribute("aria-pressed", on ? "true" : "false");
       btn.dataset.value = item.id;
@@ -160,13 +167,21 @@
     });
   }
 
-  function syncMultiGroup(container, typesState) {
+  function syncMultiGroup(container, valuesState) {
     var btns = container.querySelectorAll("button[data-value]");
     btns.forEach(function (btn) {
-      var on = !!typesState[btn.dataset.value];
+      var on = !!valuesState[btn.dataset.value];
       btn.classList.toggle("is-on", on);
       btn.setAttribute("aria-pressed", on ? "true" : "false");
     });
+  }
+
+  function selectedRankLabels() {
+    var labels = [];
+    RANKS.forEach(function (r) {
+      if (state.ranks[r.id]) labels.push(r.label);
+    });
+    return labels;
   }
 
   function selectedTypeLabels() {
@@ -187,7 +202,10 @@
     var lines = [];
     lines.push("## Quest Info");
     lines.push("");
-    lines.push("**Rank:** " + (state.rank ? labelById(RANKS, state.rank) : "—"));
+    var ranks = selectedRankLabels();
+    lines.push("**Rank:** " + (ranks.length ? ranks.join(", ") : "—"));
+    lines.push("**Invite Only:** " + (state.inviteOnly ? "Yes" : "No"));
+    lines.push("**Quest Line:** " + (state.questLine ? mdEscapeInline(state.questLine) : "—"));
     var t = selectedTypeLabels();
     lines.push("**Type:** " + (t.length ? t.join(", ") : "—"));
     lines.push("**Length:** " + (state.length ? labelById(LENGTHS, state.length) : "—"));
@@ -251,9 +269,9 @@
     renderCwList();
   }
 
-  buildExclusiveGroup(rankEl, RANKS, state.rank, function (next) {
-    state.rank = next;
-    syncExclusiveButtons(rankEl, state.rank);
+  buildMultiGroup(rankEl, RANKS, state.ranks, function (id) {
+    state.ranks[id] = !state.ranks[id];
+    syncMultiGroup(rankEl, state.ranks);
     renderMarkdown();
   });
 
@@ -269,11 +287,25 @@
     renderMarkdown();
   });
 
-  buildMultiGroup(typeEl, state.types, function (id) {
+  buildMultiGroup(typeEl, TYPES, state.types, function (id) {
     state.types[id] = !state.types[id];
     syncMultiGroup(typeEl, state.types);
     renderMarkdown();
   });
+
+  if (inviteOnlyEl) {
+    inviteOnlyEl.addEventListener("change", function () {
+      state.inviteOnly = !!inviteOnlyEl.checked;
+      renderMarkdown();
+    });
+  }
+
+  if (questLineEl) {
+    questLineEl.addEventListener("input", function () {
+      state.questLine = questLineEl.value.trim();
+      renderMarkdown();
+    });
+  }
 
   if (cwFilterEl) {
     cwFilterEl.addEventListener("input", function () {

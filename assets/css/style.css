@@ -542,6 +542,25 @@ small {
   gap: 0.5rem;
 }
 
+.questinfo-rank-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.questinfo-inline-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--parchment);
+  font-size: 0.98rem;
+}
+
+.questinfo-inline-check input {
+  accent-color: var(--gold);
+}
+
 .questinfo-cw-fieldset .questinfo-cw-hint {
   margin: 0 0 0.65rem;
 }
