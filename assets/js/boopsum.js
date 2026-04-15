@@ -28,6 +28,7 @@
   var errEl = document.getElementById("boopsum-error");
   var resEl = document.getElementById("boopsum-result");
   var partySummaryEl = document.getElementById("out-party-summary");
+  var boopsumCommandEl = document.getElementById("out-boopsum-command");
   var partySummaryTextEl = document.getElementById("out-party-summary-text");
 
   function showError(msg) {
@@ -171,6 +172,13 @@
       .join(", ");
   }
 
+  function boopsumCommand(totalXp, party) {
+    var levels = party.map(function (p) {
+      return String(p.level);
+    });
+    return ["!boopsum", String(totalXp)].concat(levels).join(" ");
+  }
+
   calcBtn.addEventListener("click", function () {
     clearError();
     var totalXp = Math.floor(Number(form.totalXp.value));
@@ -220,6 +228,7 @@
     document.getElementById("out-gp-c").textContent = fmtList(NewGP_C);
     document.getElementById("out-itemloot").textContent = String(ItemLoot);
 
+    boopsumCommandEl.textContent = boopsumCommand(totalXp, party);
     partySummaryTextEl.textContent = partySummaryLine(party);
     partySummaryEl.hidden = false;
 
