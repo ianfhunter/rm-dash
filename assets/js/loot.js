@@ -175,9 +175,25 @@
     return "";
   }
 
+  function findTypeKey() {
+    var direct = keyFor(["type", "item type", "category", "item category"]);
+    if (direct) return direct;
+    for (var i = 0; i < headers.length; i++) {
+      var normalized = normalizedHeader(headers[i]);
+      if (
+        normalized.indexOf("type") !== -1 ||
+        normalized.indexOf("category") !== -1 ||
+        normalized.indexOf("classification") !== -1
+      ) {
+        return headers[i];
+      }
+    }
+    return "";
+  }
+
   function setupDisplayKeys() {
     displayKeys.name = keyFor(["name", "item", "item name"]) || nameKey || headers[0] || "";
-    displayKeys.type = keyFor(["type", "item type"]);
+    displayKeys.type = findTypeKey();
     displayKeys.cost = costKey;
     displayKeys.attunement = keyFor(["attunement", "attunement required"]);
     displayKeys.a = keyFor(["a"]);
@@ -192,7 +208,7 @@
     var typeFilter = typeFilterEl ? String(typeFilterEl.value || "").trim() : "";
     if (typeFilter) {
       out = out.filter(function (row) {
-        return cellStr(row, displayKeys.type).trim() === typeFilter;
+        return cellStr(row, displayKeys.type).trim().toLowerCase() === typeFilter.toLowerCase();
       });
     }
 
@@ -207,7 +223,7 @@
         if (ac < bc) return -1 * sortDir;
         if (ac > bc) return 1 * sortDir;
       } else {
-        var k = sortBy === "type" ? displayKeys.type : displayKeys.name;
+        var k = sortBy === "type" ? displayKeys.type || displayKeys.name : displayKeys.name;
         var av = cellStr(a, k).toLowerCase();
         var bv = cellStr(b, k).toLowerCase();
         if (av < bv) return -1 * sortDir;
@@ -224,6 +240,16 @@
 
   function refreshTypeFilterOptions() {
     if (!typeFilterEl) return;
+    if (!displayKeys.type) {
+      typeFilterEl.innerHTML = "";
+      var missingOpt = document.createElement("option");
+      missingOpt.value = "";
+      missingOpt.textContent = "Type column unavailable";
+      typeFilterEl.appendChild(missingOpt);
+      typeFilterEl.disabled = true;
+      return;
+    }
+    typeFilterEl.disabled = false;
     var selected = String(typeFilterEl.value || "");
     var seen = {};
     var types = [];
