@@ -325,6 +325,32 @@ body.tab-wide main {
   word-break: break-word;
 }
 
+.mono-output {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+}
+
+.copyable-output {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin: 0 0 0.75rem;
+}
+
+.copyable-output:last-child {
+  margin-bottom: 0;
+}
+
+.copyable-output > .party-summary-text,
+.copyable-output > textarea {
+  flex: 1;
+  min-width: 0;
+}
+
+.copyable-output-btn {
+  flex: 0 0 auto;
+  min-width: 4.6rem;
+}
+
 .btn {
   font-family: "Cinzel", serif;
   letter-spacing: 0.05em;
@@ -950,7 +976,6 @@ small {
 
 .loot-checkout-output {
   width: 100%;
-  font: inherit;
   font-size: 0.95rem;
   line-height: 1.35;
   padding: 0.55rem 0.65rem;

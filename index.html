@@ -87,9 +87,15 @@
 
           <div id="out-party-summary" class="party-summary-box" hidden>
             <p class="party-summary-label">Boopsum command</p>
-            <p id="out-boopsum-command" class="party-summary-text"></p>
+            <div class="copyable-output" data-copy-target="#out-boopsum-command">
+              <p id="out-boopsum-command" class="party-summary-text mono-output"></p>
+              <button type="button" class="btn ghost copyable-output-btn" aria-label="Copy Boopsum command">Copy</button>
+            </div>
             <p class="party-summary-label">Character/Players, separated by commas</p>
-            <p id="out-party-summary-text" class="party-summary-text"></p>
+            <div class="copyable-output" data-copy-target="#out-party-summary-text">
+              <p id="out-party-summary-text" class="party-summary-text mono-output"></p>
+              <button type="button" class="btn ghost copyable-output-btn" aria-label="Copy character and player list">Copy</button>
+            </div>
           </div>
         </article>
       </div>
@@ -146,7 +152,10 @@
               </div>
               <label class="field loot-checkout-output-wrap" id="loot-checkout-wrap" hidden>
                 <span>Checkout markdown</span>
-                <textarea id="loot-checkout-output" class="loot-checkout-output" rows="8" readonly spellcheck="false"></textarea>
+                <div class="copyable-output" data-copy-target="#loot-checkout-output">
+                  <textarea id="loot-checkout-output" class="loot-checkout-output mono-output" rows="8" readonly spellcheck="false"></textarea>
+                  <button type="button" class="btn ghost copyable-output-btn" aria-label="Copy checkout markdown">Copy</button>
+                </div>
               </label>
             </div>
           </aside>
@@ -264,11 +273,14 @@
         </div>
 
         <div class="card questinfo-output-card">
-          <h3 class="questinfo-output-title">Markdown</h3>
+          <h3 class="questinfo-output-title">Quest Markdown</h3>
           <p class="hint questinfo-output-hint">Copy this block into Discord.</p>
           <label class="field">
             <span class="sr-only">Generated markdown</span>
-            <textarea id="qi-md-output" class="questinfo-md-output" readonly rows="14" spellcheck="false"></textarea>
+            <div class="copyable-output" data-copy-target="#qi-md-output">
+              <textarea id="qi-md-output" class="questinfo-md-output mono-output" readonly rows="14" spellcheck="false"></textarea>
+              <button type="button" class="btn ghost copyable-output-btn" aria-label="Copy quest markdown">Copy</button>
+            </div>
           </label>
         </div>
       </div>
@@ -306,5 +318,6 @@
   <script src="assets/js/questinfo.js"></script>
   <script src="assets/js/staff.js"></script>
   <script src="assets/js/loot.js"></script>
+  <script src="assets/js/copyable.js"></script>
 </body>
 </html>
