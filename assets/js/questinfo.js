@@ -213,12 +213,14 @@
     lines.push("");
     var cw = selectedWarningsSorted();
     var warnings = "**Content warnings:** ";
-    cw.forEach(function (warning, idx) {
-      warnings += (idx ? ", " : "") + mdEscapeInline(warning);
-    });
-    if (cw.length) {
-      lines.push(warnings);
+    if (!cw.length) {
+      warnings += "—";
+    } else {
+      cw.forEach(function (warning, idx) {
+        warnings += (idx ? ", " : "") + mdEscapeInline(warning);
+      });
     }
+    lines.push(warnings);
     lines.push("");
     mdOutEl.value = lines.join("\n");
   }
