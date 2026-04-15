@@ -311,8 +311,8 @@
       actTd.appendChild(buyBtn);
       var sellBtn = document.createElement("button");
       sellBtn.type = "button";
-      sellBtn.className = "btn ghost loot-add-btn";
-      sellBtn.textContent = "Sell";
+      sellBtn.className = "btn ghost loot-add-btn loot-add-btn-sell";
+      sellBtn.textContent = "Sell (½)";
       sellBtn.addEventListener(
         "click",
         (function (copy, rid) {
@@ -406,6 +406,19 @@
     if (tableWrap && !tableWrap.hidden) renderTable();
   }
 
+  function changeCartQty(id, delta) {
+    var entry = cart[id];
+    if (!entry) return;
+    var nextQty = (Number(entry.qty) || 1) + delta;
+    if (nextQty <= 0) {
+      removeFromCart(id);
+      return;
+    }
+    entry.qty = nextQty;
+    saveCart();
+    renderCart();
+  }
+
   function clearCart() {
     cart = {};
     saveCart();
@@ -470,6 +483,34 @@
       meta.textContent = (mode === "sell" ? "Selling" : "Buying") + " · " + (mode === "sell" ? "+" : "-") + toPriceText(Math.abs(lineTotal)) + " gp";
       info.appendChild(title);
       info.appendChild(meta);
+      var controls = document.createElement("div");
+      controls.className = "loot-cart-item-controls";
+      var decBtn = document.createElement("button");
+      decBtn.type = "button";
+      decBtn.className = "btn ghost loot-cart-qty-btn";
+      decBtn.setAttribute("aria-label", "Decrease quantity for " + name);
+      decBtn.textContent = "−";
+      decBtn.addEventListener(
+        "click",
+        (function (rid) {
+          return function () {
+            changeCartQty(rid, -1);
+          };
+        })(id)
+      );
+      var incBtn = document.createElement("button");
+      incBtn.type = "button";
+      incBtn.className = "btn ghost loot-cart-qty-btn";
+      incBtn.setAttribute("aria-label", "Increase quantity for " + name);
+      incBtn.textContent = "+";
+      incBtn.addEventListener(
+        "click",
+        (function (rid) {
+          return function () {
+            changeCartQty(rid, 1);
+          };
+        })(id)
+      );
       var rm = document.createElement("button");
       rm.type = "button";
       rm.className = "btn ghost loot-cart-remove";
@@ -483,8 +524,11 @@
           };
         })(id)
       );
+      controls.appendChild(decBtn);
+      controls.appendChild(incBtn);
+      controls.appendChild(rm);
       li.appendChild(info);
-      li.appendChild(rm);
+      li.appendChild(controls);
       cartList.appendChild(li);
     }
     cartTotalEl.textContent = toPriceText(sum);
