@@ -196,8 +196,9 @@
     var PArr = party.map(function (p) {
       return p.level;
     });
+    var PlayerXP = Math.floor(totalXp / Math.floor(NParty));
     var XPArr = PArr.map(function () {
-      return Math.floor(totalXp / NParty);
+      return PlayerXP;
     });
     var LSum = PArr.reduce(function (a, b) {
       return a + b;
@@ -223,6 +224,7 @@
     document.getElementById("out-levels").textContent = fmtList(LText);
     document.getElementById("out-apl").textContent = String(APL);
     document.getElementById("out-totalxp").textContent = String(totalXp);
+    document.getElementById("out-xp-each").textContent = String(PlayerXP);
     document.getElementById("out-gp-a").textContent = fmtList(NewGP_A);
     document.getElementById("out-gp-b").textContent = fmtList(NewGP_B);
     document.getElementById("out-gp-c").textContent = fmtList(NewGP_C);
