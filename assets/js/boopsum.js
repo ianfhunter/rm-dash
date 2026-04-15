@@ -30,6 +30,7 @@
   var partySummaryEl = document.getElementById("out-party-summary");
   var boopsumCommandEl = document.getElementById("out-boopsum-command");
   var partySummaryTextEl = document.getElementById("out-party-summary-text");
+  var lootLogEl = document.getElementById("out-loot-log");
 
   function showError(msg) {
     errEl.textContent = msg;
@@ -179,6 +180,18 @@
     return ["!boopsum", String(totalXp)].concat(levels).join(" ");
   }
 
+  function lootLogMarkdown(xpEach, gpEachArr, party) {
+    var characters = party.map(function (p) {
+      return p.character || "—";
+    });
+    return [
+      "@Role (" + characters.join(", ") + ")",
+      "**XP:** " + String(xpEach) + " each",
+      "**Gold:** " + fmtList(gpEachArr),
+      "**Loot:** To Be Determined"
+    ].join("\n");
+  }
+
   calcBtn.addEventListener("click", function () {
     clearError();
     var totalXp = Math.floor(Number(form.totalXp.value));
@@ -232,6 +245,7 @@
 
     boopsumCommandEl.textContent = boopsumCommand(totalXp, party);
     partySummaryTextEl.textContent = partySummaryLine(party);
+    lootLogEl.textContent = lootLogMarkdown(PlayerXP, NewGP_B, party);
     partySummaryEl.hidden = false;
 
     resEl.hidden = false;

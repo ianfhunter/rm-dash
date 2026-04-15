@@ -325,6 +325,10 @@ body.tab-wide main {
   word-break: break-word;
 }
 
+.party-summary-text.preformatted {
+  white-space: pre-wrap;
+}
+
 .mono-output {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
 }
