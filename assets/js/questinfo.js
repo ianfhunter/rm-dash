@@ -211,14 +211,13 @@
     lines.push("**Length:** " + (state.length ? labelById(LENGTHS, state.length) : "—"));
     lines.push("**Difficulty:** " + (state.difficulty ? labelById(DIFFICULTIES, state.difficulty) : "—"));
     lines.push("");
-    lines.push("### Content warnings");
     var cw = selectedWarningsSorted();
-    if (!cw.length) {
-      lines.push("Unspecified");
-    } else {
-      cw.forEach(function (w) {
-        lines.push("- " + mdEscapeInline(w));
-      });
+    var warnings = "**Content warnings:** "
+    cw.forEach(function (t) {
+      warnings += ", " + mdEscapeInline(w)
+    });
+    if (cw.length){
+      lines.push(warnings);
     }
     lines.push("");
     mdOutEl.value = lines.join("\n");
