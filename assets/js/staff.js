@@ -6,6 +6,10 @@
     { key: "xp_gp", name: "XP + GP", cost: 30 },
     { key: "xp", name: "XP", cost: 60 },
     { key: "gp", name: "GP", cost: 120 },
+    { key: "common_gacha", name: "Common Item (Gacha)", cost: 10 },
+    { key: "common_item", name: "Custom Common Item", cost: 30 },
+    { key: "uncommon_item", name: "Custom Uncommon Item", cost: 60 },
+    { key: "rare_item", name: "Custom Rare Item", cost: 120 },
   ];
 
   var DM_LIMITS = [0, 75, 150, 450, 950, 1875, 2250, 3500, 4000, 5250, 3750, 5000, 5000, 6250, 7500, 7500, 10000, 10000, 12500, 12500, 12500];
