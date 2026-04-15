@@ -125,7 +125,7 @@ main {
   margin: 0 auto 3rem;
 }
 
-body.tab-loot main {
+body.tab-wide main {
   max-width: min(96rem, 100%);
 }
 
@@ -966,4 +966,17 @@ small {
 .staff-reward-row.is-unaffordable td {
   color: var(--feather);
   opacity: 0.45;
+}
+
+.avrae-frame-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.avrae-frame {
+  display: block;
+  width: 100%;
+  min-height: min(78vh, 64rem);
+  border: 0;
+  background: rgba(8, 7, 11, 0.92);
 }

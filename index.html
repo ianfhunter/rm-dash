@@ -24,6 +24,7 @@
       <button type="button" class="tab" role="tab" id="tab-loot" aria-selected="false" aria-controls="panel-loot" data-tab="loot">Loot</button>
       <button type="button" class="tab" role="tab" id="tab-staff" aria-selected="false" aria-controls="panel-staff" data-tab="staff">Staff Points</button>
       <button type="button" class="tab" role="tab" id="tab-questinfo" aria-selected="false" aria-controls="panel-questinfo" data-tab="questinfo">Quest Info</button>
+      <button type="button" class="tab" role="tab" id="tab-avrae" aria-selected="false" aria-controls="panel-avrae" data-tab="avrae">Avrae</button>
     </nav>
   </header>
 
@@ -250,6 +251,24 @@
             <span class="sr-only">Generated markdown</span>
             <textarea id="qi-md-output" class="questinfo-md-output" readonly rows="14" spellcheck="false"></textarea>
           </label>
+        </div>
+      </div>
+    </section>
+
+    <section id="panel-avrae" class="panel" role="tabpanel" aria-labelledby="tab-avrae" hidden>
+      <div class="panel-inner">
+        <header class="panel-head">
+          <h2>Avrae</h2>
+          <p class="lede">Embedded Avrae UI. If it fails to load here, open it directly in a new tab.</p>
+        </header>
+        <div class="card avrae-frame-card">
+          <iframe
+            class="avrae-frame"
+            src="https://avrae-ui.netlify.app/"
+            title="Avrae UI"
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+          ></iframe>
         </div>
       </div>
     </section>
