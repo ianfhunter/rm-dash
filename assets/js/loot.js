@@ -235,58 +235,6 @@
       th.textContent = mainHeaders[h];
       if (mainHeaders[h] === "Cart") th.className = "loot-actions-head";
       headerRowEl.appendChild(th);
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "loot-th-btn";
-      var label = document.createElement("span");
-      label.textContent = key;
-      btn.appendChild(label);
-      if (sortCol === key) {
-        var ind = document.createElement("span");
-        ind.className = "loot-sort-ind";
-        ind.textContent = sortDir > 0 ? " ▲" : " ▼";
-        ind.setAttribute("aria-hidden", "true");
-        btn.appendChild(ind);
-      }
-      btn.addEventListener(
-        "click",
-        (function (col) {
-          return function () {
-            if (sortCol === col) sortDir = -sortDir;
-            else {
-              sortCol = col;
-              sortDir = 1;
-            }
-            page = 1;
-            renderTable();
-          };
-        })(key)
-      );
-      th.appendChild(btn);
-      trh.appendChild(th);
-
-      var thf = document.createElement("th");
-      var inp = document.createElement("input");
-      inp.type = "search";
-      inp.className = "loot-filter-input";
-      inp.placeholder = "Filter…";
-      inp.setAttribute("aria-label", "Filter " + key);
-      inp.value = colFilters[key] || "";
-      inp.addEventListener(
-        "input",
-        (function (col) {
-          return function (evt) {
-            var source = evt && evt.target ? evt.target : this;
-            var v = source && source.value ? source.value.trim().toLowerCase() : "";
-            if (v) colFilters[col] = v;
-            else delete colFilters[col];
-            page = 1;
-            renderTable();
-          };
-        })(key)
-      );
-      thf.appendChild(inp);
-      trf.appendChild(thf);
     }
 
     tbody.innerHTML = "";
