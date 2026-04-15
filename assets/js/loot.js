@@ -253,8 +253,9 @@
       inp.addEventListener(
         "input",
         (function (col) {
-          return function () {
-            var v = inp.value.trim().toLowerCase();
+          return function (evt) {
+            var source = evt && evt.target ? evt.target : this;
+            var v = source && source.value ? source.value.trim().toLowerCase() : "";
             if (v) colFilters[col] = v;
             else delete colFilters[col];
             page = 1;
