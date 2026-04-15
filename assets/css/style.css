@@ -786,6 +786,11 @@ small {
   text-align: center;
 }
 
+.loot-add-btn-sell {
+  border-color: rgba(107, 168, 112, 0.55);
+  color: #b9e2bc;
+}
+
 .loot-pagination {
   display: flex;
   flex-wrap: wrap;
@@ -876,6 +881,20 @@ small {
   padding: 0.2rem 0.45rem;
   min-width: 2rem;
   font-size: 1.1rem;
+  line-height: 1;
+}
+
+.loot-cart-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.loot-cart-qty-btn {
+  flex-shrink: 0;
+  min-width: 2rem;
+  padding: 0.2rem 0.45rem;
+  font-size: 0.95rem;
   line-height: 1;
 }
 
