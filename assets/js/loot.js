@@ -15,6 +15,9 @@
   var cartList = document.getElementById("loot-cart-list");
   var cartTotalEl = document.getElementById("loot-cart-total");
   var cartClear = document.getElementById("loot-cart-clear");
+  var cartCheckout = document.getElementById("loot-cart-checkout");
+  var checkoutWrap = document.getElementById("loot-checkout-wrap");
+  var checkoutOutput = document.getElementById("loot-checkout-output");
 
   if (!searchBtn || !budgetInput || !headerRowEl || !filterRowEl || !tbody) return;
 
@@ -293,21 +296,32 @@
       var id = String(row._sheetRow);
       var actTd = document.createElement("td");
       actTd.className = "loot-actions-cell";
-      var addBtn = document.createElement("button");
-      addBtn.type = "button";
-      addBtn.className = "btn ghost loot-add-btn";
-      addBtn.textContent = cart[id] ? "In cart" : "Add to cart";
-      addBtn.disabled = !!cart[id];
-      addBtn.addEventListener(
+      var buyBtn = document.createElement("button");
+      buyBtn.type = "button";
+      buyBtn.className = "btn ghost loot-add-btn";
+      buyBtn.textContent = "Buy";
+      buyBtn.addEventListener(
         "click",
         (function (copy, rid) {
           return function () {
-            addToCart(rid, copy);
-            renderTable();
+            addToCart(rid, copy, "buy");
           };
         })(JSON.parse(JSON.stringify(row)), id)
       );
-      actTd.appendChild(addBtn);
+      actTd.appendChild(buyBtn);
+      var sellBtn = document.createElement("button");
+      sellBtn.type = "button";
+      sellBtn.className = "btn ghost loot-add-btn";
+      sellBtn.textContent = "Sell";
+      sellBtn.addEventListener(
+        "click",
+        (function (copy, rid) {
+          return function () {
+            addToCart(rid, copy, "sell");
+          };
+        })(JSON.parse(JSON.stringify(row)), id)
+      );
+      actTd.appendChild(sellBtn);
       tr.appendChild(actTd);
       tbody.appendChild(tr);
     }
@@ -371,8 +385,16 @@
     }
   }
 
-  function addToCart(id, row) {
-    cart[id] = { row: row };
+  function toPriceText(n) {
+    return String(Math.round(n * 100) / 100);
+  }
+
+  function addToCart(id, row, mode) {
+    var cartId = id + ":" + mode;
+    if (!cart[cartId]) cart[cartId] = { row: row, mode: mode, qty: 0 };
+    cart[cartId].row = row;
+    cart[cartId].mode = mode || "buy";
+    cart[cartId].qty = (cart[cartId].qty || 0) + 1;
     saveCart();
     renderCart();
   }
@@ -391,29 +413,61 @@
     if (tableWrap && !tableWrap.hidden) renderTable();
   }
 
+  function normalizeCartEntry(id, entry) {
+    if (!entry || !entry.row) return null;
+    if (!entry.mode) entry.mode = id.indexOf(":sell") !== -1 ? "sell" : "buy";
+    entry.qty = Number(entry.qty) || 1;
+    return entry;
+  }
+
+  function buildCheckoutMarkdown(ids) {
+    var buying = [];
+    var selling = [];
+    for (var i = 0; i < ids.length; i++) {
+      var id = ids[i];
+      var entry = normalizeCartEntry(id, cart[id]);
+      if (!entry) continue;
+      var rw = entry.row;
+      var nk = nameKey || headers[0] || "";
+      var name = nk ? cellStr(rw, nk) : "";
+      if (!name) name = "Item";
+      var qty = entry.qty || 1;
+      var baseCost = cartCost(rw);
+      if (entry.mode === "sell") selling.push("- " + name + " x(" + qty + ") +" + toPriceText((baseCost * qty) / 2));
+      else buying.push("- " + name + " x(" + qty + ") -" + toPriceText(baseCost * qty));
+    }
+    var out = [];
+    if (buying.length) out.push("**Buying**\n" + buying.join("\n"));
+    if (selling.length) out.push("**Selling**\n" + selling.join("\n"));
+    return out.join("\n\n");
+  }
+
   function renderCart() {
     cartList.innerHTML = "";
     var ids = Object.keys(cart);
     var sum = 0;
     for (var i = 0; i < ids.length; i++) {
       var id = ids[i];
-      var entry = cart[id];
+      var entry = normalizeCartEntry(id, cart[id]);
+      if (!entry) continue;
       var rw = entry.row;
       var nk = nameKey || headers[0] || "";
       var name = nk ? cellStr(rw, nk) : "";
       if (!name) name = "Item";
-      var cost = cartCost(rw);
-      sum += cost;
+      var qty = entry.qty || 1;
+      var mode = entry.mode === "sell" ? "sell" : "buy";
+      var lineTotal = (mode === "sell" ? -cartCost(rw) / 2 : cartCost(rw)) * qty;
+      sum += lineTotal;
       var li = document.createElement("li");
       li.className = "loot-cart-item";
       var info = document.createElement("div");
       info.className = "loot-cart-item-info";
       var title = document.createElement("p");
       title.className = "loot-cart-item-name";
-      title.textContent = name;
+      title.textContent = name + " × " + qty;
       var meta = document.createElement("p");
       meta.className = "loot-cart-item-meta";
-      meta.textContent = cost ? cost + " gp" : "—";
+      meta.textContent = (mode === "sell" ? "Selling" : "Buying") + " · " + (mode === "sell" ? "+" : "-") + toPriceText(Math.abs(lineTotal)) + " gp";
       info.appendChild(title);
       info.appendChild(meta);
       var rm = document.createElement("button");
@@ -433,7 +487,11 @@
       li.appendChild(rm);
       cartList.appendChild(li);
     }
-    cartTotalEl.textContent = String(Math.round(sum * 100) / 100);
+    cartTotalEl.textContent = toPriceText(sum);
+    if (checkoutWrap && checkoutOutput) {
+      checkoutOutput.value = buildCheckoutMarkdown(ids);
+      checkoutWrap.hidden = !checkoutOutput.value;
+    }
   }
 
   function runSearch() {
@@ -478,9 +536,20 @@
   searchBtn.addEventListener("click", runSearch);
 
   cartClear.addEventListener("click", clearCart);
+  if (cartCheckout && checkoutWrap && checkoutOutput) {
+    cartCheckout.addEventListener("click", function () {
+      var md = checkoutOutput.value || "";
+      checkoutWrap.hidden = !md;
+      if (!md) return;
+      checkoutOutput.focus();
+      checkoutOutput.select();
+      try {
+        navigator.clipboard.writeText(md).catch(function () {});
+      } catch (e) {}
+    });
+  }
 
   loadCart();
   renderCart();
   setStatus("Enter a budget and choose Search to load the catalog from the spreadsheet.");
 })();
-

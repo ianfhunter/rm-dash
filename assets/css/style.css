@@ -763,21 +763,25 @@ small {
 }
 
 .loot-actions-head {
-  width: 7.5rem;
-  max-width: 7.5rem;
+  width: 9rem;
+  max-width: 9rem;
   text-align: center;
 }
 
 .loot-actions-cell {
-  max-width: 7.5rem;
+  max-width: 9rem;
   text-align: center;
   white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: stretch;
 }
 
 .loot-add-btn {
   font-size: 0.65rem;
   padding: 0.35rem 0.5rem;
-  white-space: normal;
+  white-space: nowrap;
   line-height: 1.2;
   text-align: center;
 }
@@ -884,6 +888,29 @@ small {
 .loot-cart-total {
   margin: 0 0 0.65rem;
   font-size: 1.05rem;
+}
+
+.loot-cart-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.loot-checkout-output-wrap {
+  margin-top: 0.8rem;
+}
+
+.loot-checkout-output {
+  width: 100%;
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid rgba(201, 162, 39, 0.25);
+  background: rgba(12, 10, 15, 0.8);
+  color: var(--parchment);
+  resize: vertical;
 }
 
 @media (max-width: 960px) {

@@ -135,7 +135,14 @@
             <ul class="loot-cart-list" id="loot-cart-list"></ul>
             <div class="loot-cart-footer">
               <p class="loot-cart-total"><strong>Total:</strong> <span id="loot-cart-total">0</span> <span class="muted">gp</span></p>
-              <button type="button" class="btn ghost" id="loot-cart-clear">Clear cart</button>
+              <div class="loot-cart-buttons">
+                <button type="button" class="btn ghost" id="loot-cart-clear">Clear cart</button>
+                <button type="button" class="btn primary" id="loot-cart-checkout">Checkout</button>
+              </div>
+              <label class="field loot-checkout-output-wrap" id="loot-checkout-wrap" hidden>
+                <span>Checkout markdown</span>
+                <textarea id="loot-checkout-output" class="loot-checkout-output" rows="8" readonly spellcheck="false"></textarea>
+              </label>
             </div>
           </aside>
         </div>
