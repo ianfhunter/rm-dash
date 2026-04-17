@@ -6,6 +6,7 @@
     staff: document.getElementById("panel-staff"),
     questinfo: document.getElementById("panel-questinfo"),
     avrae: document.getElementById("panel-avrae"),
+    links: document.getElementById("panel-links"),
   };
 
   function activate(name) {
