@@ -212,53 +212,6 @@ body.tab-wide main {
   color: var(--parchment);
 }
 
-.boopsum-fieldset {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  min-width: 0;
-}
-
-.boopsum-choice-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.boopsum-choice {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.6rem;
-  border: 1px solid rgba(201, 162, 39, 0.25);
-  border-radius: 999px;
-  background: rgba(12, 10, 15, 0.45);
-  color: var(--parchment);
-}
-
-.boopsum-choice input[type="radio"] {
-  accent-color: var(--gold);
-}
-
-.boopsum-slider-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-#quest-tuning {
-  width: 100%;
-  accent-color: var(--gold);
-}
-
-.boopsum-slider-labels {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  font-size: 0.78rem;
-  color: var(--parchment-muted);
-}
-
 .field select {
   appearance: none;
   -webkit-appearance: none;
