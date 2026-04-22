@@ -1,6 +1,6 @@
 (function () {
-  var XLSX_URL = "RMMagicItems.xlsx";
-  var AVRAE_JSON_URL = "avrae-item-export.json";
+  var XLSX_URL = "data/RMMagicItems.xlsx";
+  var AVRAE_JSON_URL = "data/avrae-item-export.json";
   var PAGE_SIZE = 100;
   var CART_STORAGE_KEY = "rm-loot-cart-v1";
 
