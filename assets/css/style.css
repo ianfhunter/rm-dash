@@ -56,11 +56,13 @@ body {
   border-bottom: 1px solid rgba(201, 162, 39, 0.25);
   background: linear-gradient(180deg, rgba(22, 18, 28, 0.95), rgba(12, 10, 15, 0.85));
   backdrop-filter: blur(8px);
+  text-align: center;
 }
 
 .brand {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
   margin-bottom: 1.25rem;
 }
@@ -90,6 +92,7 @@ body {
 .tabs {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.5rem;
 }
 
