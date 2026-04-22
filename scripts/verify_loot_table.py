@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Serve a temp copy of the site with a tiny RMMagicItems.xlsx, open Loot, budget 200, assert tbody rows."""
+"""Serve a temp copy of the site with a tiny data/RMMagicItems.xlsx, open Loot, budget 200, assert tbody rows."""
 
 import http.server
 import shutil
@@ -36,7 +36,7 @@ def main() -> None:
         site = Path(tmp)
         shutil.copy2(ROOT / "index.html", site / "index.html")
         shutil.copytree(ROOT / "assets", site / "assets")
-        write_fixture_xlsx(site / "RMMagicItems.xlsx")
+        write_fixture_xlsx(site / "data/RMMagicItems.xlsx")
 
         handler = http.server.SimpleHTTPRequestHandler
         httpd = socketserver.TCPServer(("127.0.0.1", PORT), handler)
