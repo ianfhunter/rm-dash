@@ -1,13 +1,13 @@
 :root {
   --ink: #0c0a0f;
   --soot: #16121c;
-  --plum: #2a1f35;
-  --moss: #3d2f4a;
-  --gold: #c9a227;
-  --gold-dim: #8a7020;
-  --parchment: #e8dcc4;
-  --parchment-muted: #b8a88c;
-  --feather: #6b5b7a;
+  --plum: #1d2633;
+  --moss: #2f3d4f;
+  --gold: #d7b76a;
+  --gold-dim: #9f8351;
+  --parchment: #e6e1d4;
+  --parchment-muted: #b5afa1;
+  --feather: #8897ab;
   --danger: #c44b4b;
   --radius: 12px;
   --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
@@ -66,8 +66,14 @@ body {
 }
 
 .brand-icon {
-  font-size: 2.25rem;
-  filter: drop-shadow(0 0 12px rgba(201, 162, 39, 0.35));
+  width: 4rem;
+  height: 4rem;
+  padding: 0.35rem;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, #f3efe7, #d4ccbc);
+  border: 1px solid rgba(215, 183, 106, 0.5);
+  object-fit: contain;
+  filter: drop-shadow(0 5px 16px rgba(0, 0, 0, 0.45));
 }
 
 .brand-text h1 {
@@ -85,6 +91,21 @@ body {
   color: var(--parchment-muted);
   font-style: italic;
   font-size: 1rem;
+}
+
+
+.logo-credit {
+  margin: 0.15rem 0 0;
+  font-size: 0.85rem;
+  line-height: 1.2;
+}
+
+.logo-credit a {
+  color: var(--parchment-muted);
+}
+
+.logo-credit a:hover {
+  color: var(--parchment);
 }
 
 .tabs {
