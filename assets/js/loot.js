@@ -250,6 +250,14 @@
     return rows;
   }
 
+  function isNoValueRow(row) {
+    if (!row) return false;
+    if (row._isNoValue) return true;
+    if (!costKey) return false;
+    var rawCost = String(row[costKey] == null ? "" : row[costKey]).trim().toLowerCase();
+    return rawCost === "no value";
+  }
+
   function rowsForDisplay() {
     var out = budgetFiltered.slice();
     var nameFilter = nameFilterEl ? String(nameFilterEl.value || "").trim().toLowerCase() : "";
@@ -522,7 +530,7 @@
   }
 
   function cartCost(row) {
-    if (row && row._isNoValue) return 0;
+    if (isNoValueRow(row)) return 0;
     if (!costKey) return 0;
     var n = parseCost(row[costKey]);
     return isNaN(n) ? 0 : n;
@@ -604,7 +612,7 @@
       if (!name) name = "Item";
       var qty = entry.qty || 1;
       var baseCost = cartCost(rw);
-      if (rw && rw._isNoValue) {
+      if (isNoValueRow(rw)) {
         if (entry.mode === "sell") selling.push("- " + name + " x(" + qty + ") +No Value");
         else buying.push("- " + name + " x(" + qty + ") -No Value");
       } else if (entry.mode === "sell") selling.push("- " + name + " x(" + qty + ") +" + toPriceText((baseCost * qty) / 2));
@@ -631,7 +639,7 @@
       if (!name) name = "Item";
       var qty = entry.qty || 1;
       var mode = entry.mode === "sell" ? "sell" : "buy";
-      if (rw && rw._isNoValue) hasNoValue = true;
+      if (isNoValueRow(rw)) hasNoValue = true;
       var lineTotal = (mode === "sell" ? -cartCost(rw) / 2 : cartCost(rw)) * qty;
       sum += lineTotal;
       var li = document.createElement("li");
@@ -644,7 +652,7 @@
       var meta = document.createElement("p");
       meta.className = "loot-cart-item-meta";
       meta.textContent =
-        rw && rw._isNoValue
+        isNoValueRow(rw)
           ? (mode === "sell" ? "Selling" : "Buying") + " · No Value"
           : (mode === "sell" ? "Selling" : "Buying") + " · " + (mode === "sell" ? "+" : "-") + toPriceText(Math.abs(lineTotal)) + " gp";
       info.appendChild(title);
