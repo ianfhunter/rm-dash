@@ -258,6 +258,10 @@
     return rawCost === "no value";
   }
 
+  function isJsonNoValueRow(row) {
+    return !!(row && row._isNoValue);
+  }
+
   function rowsForDisplay() {
     var out = budgetFiltered.slice();
     var nameFilter = nameFilterEl ? String(nameFilterEl.value || "").trim().toLowerCase() : "";
@@ -639,7 +643,7 @@
       if (!name) name = "Item";
       var qty = entry.qty || 1;
       var mode = entry.mode === "sell" ? "sell" : "buy";
-      if (isNoValueRow(rw)) hasNoValue = true;
+      if (isJsonNoValueRow(rw)) hasNoValue = true;
       var lineTotal = (mode === "sell" ? -cartCost(rw) / 2 : cartCost(rw)) * qty;
       sum += lineTotal;
       var li = document.createElement("li");
