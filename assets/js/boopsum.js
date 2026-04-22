@@ -202,9 +202,7 @@
     });
     return [
       "@Role (" + characters.join(", ") + ")",
-      "**XP:** " + String(xpEach) + " each",
-      "**Quest Type:** " + questTypeLabel,
-      "**Tuning:** " + effortLabel,
+      "**XP:** " + String(xpEach) + "xp each",
       "**Gold:** " + fmtList(gpEachArr),
       "**Loot:** To Be Determined"
     ].join("\n");
