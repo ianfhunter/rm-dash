@@ -211,7 +211,12 @@
             <p class="hint loot-cart-hint">Selected items and running total (GP).</p>
             <ul class="loot-cart-list" id="loot-cart-list"></ul>
             <div class="loot-cart-footer">
-              <p class="loot-cart-total"><strong>Total:</strong> <span id="loot-cart-total">0</span> <span class="muted">gp</span></p>
+              <p class="loot-cart-total">
+                <strong>Total:</strong>
+                <span id="loot-cart-total">0</span>
+                <span class="muted">gp</span>
+                <span id="loot-cart-novalue-warning" class="loot-cart-novalue-warning" hidden title="Cart contains one or more No Value items." aria-label="Cart contains No Value items">⚠️</span>
+              </p>
               <div class="loot-cart-buttons">
                 <button type="button" class="btn ghost" id="loot-cart-clear">Clear cart</button>
                 <button type="button" class="btn primary" id="loot-cart-checkout">Checkout</button>
