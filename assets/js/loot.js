@@ -6,6 +6,7 @@
   var budgetInput = document.getElementById("loot-budget");
   var searchBtn = document.getElementById("loot-search");
   var showAllBtn = document.getElementById("loot-show-all");
+  var nameFilterEl = document.getElementById("loot-name-filter");
   var typeFilterEl = document.getElementById("loot-type-filter");
   var sortByEl = document.getElementById("loot-sort-by");
   var sortDirEl = document.getElementById("loot-sort-dir");
@@ -205,6 +206,12 @@
 
   function rowsForDisplay() {
     var out = budgetFiltered.slice();
+    var nameFilter = nameFilterEl ? String(nameFilterEl.value || "").trim().toLowerCase() : "";
+    if (nameFilter) {
+      out = out.filter(function (row) {
+        return cellStr(row, displayKeys.name).toLowerCase().indexOf(nameFilter) !== -1;
+      });
+    }
     var typeFilter = typeFilterEl ? String(typeFilterEl.value || "").trim() : "";
     if (typeFilter) {
       out = out.filter(function (row) {
@@ -699,6 +706,12 @@
   }
   if (typeFilterEl) {
     typeFilterEl.addEventListener("change", function () {
+      page = 1;
+      renderTable();
+    });
+  }
+  if (nameFilterEl) {
+    nameFilterEl.addEventListener("input", function () {
       page = 1;
       renderTable();
     });
