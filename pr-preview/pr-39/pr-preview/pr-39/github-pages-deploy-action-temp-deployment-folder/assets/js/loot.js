@@ -21,6 +21,9 @@
   var cartTotalEl = document.getElementById("loot-cart-total");
   var cartNoValueWarningEl = document.getElementById("loot-cart-novalue-warning");
   var cartClear = document.getElementById("loot-cart-clear");
+  var cartCheckout = document.getElementById("loot-cart-checkout");
+  var checkoutWrap = document.getElementById("loot-checkout-wrap");
+  var checkoutOutput = document.getElementById("loot-checkout-output");
 
   if (!searchBtn || !budgetInput || !headerRowEl || !tbody) return;
 
@@ -253,10 +256,6 @@
     if (!costKey) return false;
     var rawCost = String(row[costKey] == null ? "" : row[costKey]).trim().toLowerCase();
     return rawCost === "no value";
-  }
-
-  function isJsonNoValueRow(row) {
-    return !!(row && row._isNoValue);
   }
 
   function rowsForDisplay() {
@@ -600,12 +599,36 @@
     return entry;
   }
 
+  function buildCheckoutMarkdown(ids) {
+    var buying = [];
+    var selling = [];
+    for (var i = 0; i < ids.length; i++) {
+      var id = ids[i];
+      var entry = normalizeCartEntry(id, cart[id]);
+      if (!entry) continue;
+      var rw = entry.row;
+      var nk = nameKey || headers[0] || "";
+      var name = nk ? cellStr(rw, nk) : "";
+      if (!name) name = "Item";
+      var qty = entry.qty || 1;
+      var baseCost = cartCost(rw);
+      if (isNoValueRow(rw)) {
+        if (entry.mode === "sell") selling.push("- " + name + " x(" + qty + ") +No Value");
+        else buying.push("- " + name + " x(" + qty + ") -No Value");
+      } else if (entry.mode === "sell") selling.push("- " + name + " x(" + qty + ") +" + toPriceText((baseCost * qty) / 2));
+      else buying.push("- " + name + " x(" + qty + ") -" + toPriceText(baseCost * qty));
+    }
+    var out = [];
+    if (buying.length) out.push("**Buying**\n" + buying.join("\n"));
+    if (selling.length) out.push("**Selling**\n" + selling.join("\n"));
+    return out.join("\n\n");
+  }
+
   function renderCart() {
     cartList.innerHTML = "";
     var ids = Object.keys(cart);
     var sum = 0;
     var hasNoValue = false;
-    var visibleCount = 0;
     for (var i = 0; i < ids.length; i++) {
       var id = ids[i];
       var entry = normalizeCartEntry(id, cart[id]);
@@ -616,8 +639,7 @@
       if (!name) name = "Item";
       var qty = entry.qty || 1;
       var mode = entry.mode === "sell" ? "sell" : "buy";
-      visibleCount++;
-      if (isJsonNoValueRow(rw)) hasNoValue = true;
+      if (isNoValueRow(rw)) hasNoValue = true;
       var lineTotal = (mode === "sell" ? -cartCost(rw) / 2 : cartCost(rw)) * qty;
       sum += lineTotal;
       var li = document.createElement("li");
@@ -684,7 +706,11 @@
       cartList.appendChild(li);
     }
     cartTotalEl.textContent = toPriceText(sum);
-    if (cartNoValueWarningEl) cartNoValueWarningEl.hidden = !(visibleCount > 0 && hasNoValue);
+    if (cartNoValueWarningEl) cartNoValueWarningEl.hidden = !hasNoValue;
+    if (checkoutWrap && checkoutOutput) {
+      checkoutOutput.value = buildCheckoutMarkdown(ids);
+      checkoutWrap.hidden = !checkoutOutput.value;
+    }
   }
 
   function runSearch(opts) {
@@ -771,6 +797,18 @@
   }
 
   cartClear.addEventListener("click", clearCart);
+  if (cartCheckout && checkoutWrap && checkoutOutput) {
+    cartCheckout.addEventListener("click", function () {
+      var md = checkoutOutput.value || "";
+      checkoutWrap.hidden = !md;
+      if (!md) return;
+      checkoutOutput.focus();
+      checkoutOutput.select();
+      try {
+        navigator.clipboard.writeText(md).catch(function () {});
+      } catch (e) {}
+    });
+  }
 
   loadCart();
   renderCart();
