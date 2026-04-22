@@ -44,6 +44,23 @@
             <span>Total adjusted XP</span>
             <input type="number" name="totalXp" min="0" step="1" required placeholder="e.g. 12000" />
           </label>
+          <fieldset class="field boopsum-fieldset">
+            <legend>Quest type</legend>
+            <div class="boopsum-choice-row" role="radiogroup" aria-label="Quest type">
+              <label class="boopsum-choice">
+                <input type="radio" name="questType" value="graveyard" />
+                <span>Graveyard</span>
+              </label>
+              <label class="boopsum-choice">
+                <input type="radio" name="questType" value="hunt" />
+                <span>Hunt</span>
+              </label>
+              <label class="boopsum-choice">
+                <input type="radio" name="questType" value="quest" checked />
+                <span>Quest</span>
+              </label>
+            </div>
+          </fieldset>
         </form>
 
         <div class="card">
@@ -72,19 +89,36 @@
           <p><strong>XP Each:</strong> <span id="out-xp-each"></span></p>
           
           <h4>Loot</h4>
-          <p class="fine-print">Tune gold to how the session felt:</p>
-          <ul class="loot-list">
-            <li><strong>Quick / low-interaction:</strong> <span id="out-gp-a"></span> <span class="muted">gp each</span></li>
-            <li><strong>Standard:</strong> <span id="out-gp-b"></span> <span class="muted">gp each</span></li>
-            <li><strong>Lore / high-interaction:</strong> <span id="out-gp-c"></span> <span class="muted">gp each</span></li>
-          </ul>
-
-          <h4>Allocations</h4>
-          <ul class="alloc-list">
-            <li><strong>Graveyard:</strong> No gold, no items.</li>
-            <li><strong>Hunt:</strong> Gold as advised; no items.</li>
-            <li><strong>Quest:</strong> Gold as advised. <strong><span id="out-itemloot"></span> gp</strong> worth of items to split.</li>
-          </ul>
+          <label class="field">
+            <span>Quest tuning</span>
+            <div class="boopsum-slider-wrap">
+              <input
+                type="range"
+                name="questTuning"
+                id="quest-tuning"
+                min="0"
+                max="2"
+                step="1"
+                value="1"
+                list="quest-tuning-markers"
+              />
+              <datalist id="quest-tuning-markers">
+                <option value="0" label="Quick"></option>
+                <option value="1" label="Standard"></option>
+                <option value="2" label="Lore"></option>
+              </datalist>
+              <div class="boopsum-slider-labels" aria-hidden="true">
+                <span>Quick / low-interaction</span>
+                <span>Standard</span>
+                <span>Lore / high-interaction</span>
+              </div>
+            </div>
+          </label>
+          <p><strong>Quest type:</strong> <span id="out-quest-type"></span></p>
+          <p><strong>Tuning:</strong> <span id="out-effort-level"></span></p>
+          <p><strong>Gold each:</strong> <span id="out-gp-selected"></span></p>
+          <p id="out-itemloot-wrap"><strong>Item loot pool:</strong> <span id="out-itemloot"></span> <span class="muted">gp worth of items</span></p>
+          <p id="out-loot-note" class="fine-print"></p>
 
           <div id="out-party-summary" class="party-summary-box" hidden>
             <p class="party-summary-label">Boopsum command</p>

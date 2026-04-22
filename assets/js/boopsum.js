@@ -31,6 +31,22 @@
   var boopsumCommandEl = document.getElementById("out-boopsum-command");
   var partySummaryTextEl = document.getElementById("out-party-summary-text");
   var lootLogEl = document.getElementById("out-loot-log");
+  var itemLootWrapEl = document.getElementById("out-itemloot-wrap");
+  var lootNoteEl = document.getElementById("out-loot-note");
+  var questTuningEl = document.getElementById("quest-tuning");
+  var lastCalcState = null;
+
+  var EFFORT_LEVELS = [
+    { key: "quick", label: "Quick / low-interaction", mod: DMod[0] },
+    { key: "standard", label: "Standard", mod: DMod[1] },
+    { key: "lore", label: "Lore / high-interaction", mod: DMod[2] }
+  ];
+
+  var QUEST_TYPES = {
+    graveyard: { label: "Graveyard", givesGold: false, givesItems: false },
+    hunt: { label: "Hunt", givesGold: true, givesItems: false },
+    quest: { label: "Quest", givesGold: true, givesItems: true }
+  };
 
   function showError(msg) {
     errEl.textContent = msg;
@@ -180,16 +196,50 @@
     return ["!boopsum", String(totalXp)].concat(levels).join(" ");
   }
 
-  function lootLogMarkdown(xpEach, gpEachArr, party) {
+  function lootLogMarkdown(xpEach, gpEachArr, party, questTypeLabel, effortLabel) {
     var characters = party.map(function (p) {
       return p.character || "—";
     });
     return [
       "@Role (" + characters.join(", ") + ")",
       "**XP:** " + String(xpEach) + " each",
+      "**Quest Type:** " + questTypeLabel,
+      "**Tuning:** " + effortLabel,
       "**Gold:** " + fmtList(gpEachArr),
       "**Loot:** To Be Determined"
     ].join("\n");
+  }
+
+  function getSelectedQuestType() {
+    return form.querySelector('input[name="questType"]:checked');
+  }
+
+  function getSelectedEffortIndex() {
+    var val = Number(questTuningEl && questTuningEl.value);
+    if (!Number.isFinite(val)) return 1;
+    return Math.min(Math.max(Math.floor(val), 0), EFFORT_LEVELS.length - 1);
+  }
+
+  function renderLootForState(state) {
+    if (!state) return;
+    var effortIdx = getSelectedEffortIndex();
+    var effort = EFFORT_LEVELS[effortIdx];
+    var questType = QUEST_TYPES[state.questTypeValue];
+    var gpByPlayer = state.partyLevels.map(function (x) {
+      return Math.floor((state.playerXp / HalfProf[x]) * effort.mod * GPMod[x]);
+    });
+    var itemLoot = gpByPlayer.reduce(function (a, b) {
+      return a + b;
+    }, 0);
+
+    document.getElementById("out-effort-level").textContent = effort.label;
+    document.getElementById("out-gp-selected").textContent = questType.givesGold ? fmtList(gpByPlayer) : "0";
+    document.getElementById("out-itemloot").textContent = questType.givesItems ? String(itemLoot) : "0";
+    itemLootWrapEl.hidden = !questType.givesItems;
+    lootNoteEl.textContent = questType.givesGold
+      ? (questType.givesItems ? "Gold and item loot are both awarded for this quest type." : "Gold is awarded; no item loot pool for this quest type.")
+      : "No gold or item loot is awarded for this quest type.";
+    lootLogEl.textContent = lootLogMarkdown(state.playerXp, questType.givesGold ? gpByPlayer : [0], state.party, questType.label, effort.label);
   }
 
   calcBtn.addEventListener("click", function () {
@@ -200,6 +250,12 @@
       return;
     }
     var party = collectParty();
+    var questTypeInput = getSelectedQuestType();
+    if (!questTypeInput || !QUEST_TYPES[questTypeInput.value]) {
+      showError("Select a quest type before calculating.");
+      return;
+    }
+    var questType = QUEST_TYPES[questTypeInput.value];
     var NParty = party.length;
     if (NParty === 0) {
       showError("Add at least one party member with a level.");
@@ -210,44 +266,36 @@
       return p.level;
     });
     var PlayerXP = Math.floor(totalXp / Math.floor(NParty));
-    var XPArr = PArr.map(function () {
-      return PlayerXP;
-    });
     var LSum = PArr.reduce(function (a, b) {
       return a + b;
     }, 0);
     var LText = PArr.slice();
     var APL = Math.round((LSum / NParty) * 100) / 100;
 
-    var NewGP_A = PArr.map(function (x, i) {
-      return Math.floor((XPArr[i] / HalfProf[x]) * DMod[0] * GPMod[x]);
-    });
-    var NewGP_B = PArr.map(function (x, i) {
-      return Math.floor((XPArr[i] / HalfProf[x]) * DMod[1] * GPMod[x]);
-    });
-    var NewGP_C = PArr.map(function (x, i) {
-      return Math.floor((XPArr[i] / HalfProf[x]) * DMod[2] * GPMod[x]);
-    });
-
-    var ItemLoot = NewGP_C.reduce(function (a, b) {
-      return a + b;
-    }, 0);
-
     document.getElementById("out-nparty").textContent = String(NParty);
     document.getElementById("out-levels").textContent = fmtList(LText);
     document.getElementById("out-apl").textContent = String(APL);
     document.getElementById("out-totalxp").textContent = String(totalXp);
     document.getElementById("out-xp-each").textContent = String(PlayerXP);
-    document.getElementById("out-gp-a").textContent = fmtList(NewGP_A);
-    document.getElementById("out-gp-b").textContent = fmtList(NewGP_B);
-    document.getElementById("out-gp-c").textContent = fmtList(NewGP_C);
-    document.getElementById("out-itemloot").textContent = String(ItemLoot);
+    document.getElementById("out-quest-type").textContent = questType.label;
 
     boopsumCommandEl.textContent = boopsumCommand(totalXp, party);
     partySummaryTextEl.textContent = partySummaryLine(party);
-    lootLogEl.textContent = lootLogMarkdown(PlayerXP, NewGP_B, party);
+    lastCalcState = {
+      party: party,
+      partyLevels: PArr,
+      playerXp: PlayerXP,
+      questTypeValue: questTypeInput.value
+    };
+    renderLootForState(lastCalcState);
     partySummaryEl.hidden = false;
 
     resEl.hidden = false;
   });
+
+  if (questTuningEl) {
+    questTuningEl.addEventListener("input", function () {
+      renderLootForState(lastCalcState);
+    });
+  }
 })();
