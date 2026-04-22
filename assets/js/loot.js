@@ -1,5 +1,6 @@
 (function () {
   var XLSX_URL = "RMMagicItems.xlsx";
+  var AVRAE_JSON_URL = "avrae-item-export.json";
   var PAGE_SIZE = 100;
   var CART_STORAGE_KEY = "rm-loot-cart-v1";
 
@@ -18,6 +19,7 @@
   var pagEl = document.getElementById("loot-pagination");
   var cartList = document.getElementById("loot-cart-list");
   var cartTotalEl = document.getElementById("loot-cart-total");
+  var cartNoValueWarningEl = document.getElementById("loot-cart-novalue-warning");
   var cartClear = document.getElementById("loot-cart-clear");
   var cartCheckout = document.getElementById("loot-cart-checkout");
   var checkoutWrap = document.getElementById("loot-checkout-wrap");
@@ -26,6 +28,7 @@
   if (!searchBtn || !budgetInput || !headerRowEl || !tbody) return;
 
   var workbookCache = null;
+  var avraeItemsCache = null;
   var headers = [];
   var costKey = "";
   var budgetFiltered = [];
@@ -108,6 +111,19 @@
         }
         workbookCache = XLSX.read(buf, { type: "array" });
         return workbookCache;
+      });
+  }
+
+  function loadAvraeItems() {
+    if (avraeItemsCache) return Promise.resolve(avraeItemsCache);
+    return fetch(AVRAE_JSON_URL)
+      .then(function (res) {
+        if (!res.ok) throw new Error("Could not load " + AVRAE_JSON_URL + " (" + res.status + ").");
+        return res.json();
+      })
+      .then(function (json) {
+        avraeItemsCache = Array.isArray(json) ? json : [];
+        return avraeItemsCache;
       });
   }
 
@@ -202,6 +218,36 @@
     displayKeys.cardLink = keyFor(["card link", "card"]);
     displayKeys.majorMinor = keyFor(["major minor", "major minor roll", "major/minor"]);
     displayKeys.notes = keyFor(["notes", "note"]);
+  }
+
+  function firstHeader(candidates, fallback) {
+    for (var i = 0; i < headers.length; i++) {
+      if (candidates.indexOf(normalizedHeader(headers[i])) !== -1) return headers[i];
+    }
+    return fallback || "";
+  }
+
+  function buildAvraeRows(items) {
+    var rows = [];
+    var nameCol = firstHeader(["name", "item", "item name"], nameKey || headers[0] || "Name");
+    var typeCol = firstHeader(["type", "item type", "category", "item category"], "Type");
+    var costCol = costKey || firstHeader(["cost gp", "cost", "cost g p"], "Cost (GP)");
+    var notesCol = firstHeader(["notes", "note"], "Notes");
+    var artCol = firstHeader(["art link", "art", "image"], "Art Link");
+
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i] || {};
+      var row = {};
+      row[nameCol] = item.name || "Avrae Item";
+      row[typeCol] = "Avrae";
+      row[costCol] = "No Value";
+      row[notesCol] = item.desc || item.meta || "";
+      row[artCol] = item.image || "";
+      row._sheetRow = "avrae-" + (i + 1);
+      row._isNoValue = true;
+      rows.push(row);
+    }
+    return rows;
   }
 
   function rowsForDisplay() {
@@ -476,6 +522,7 @@
   }
 
   function cartCost(row) {
+    if (row && row._isNoValue) return 0;
     if (!costKey) return 0;
     var n = parseCost(row[costKey]);
     return isNaN(n) ? 0 : n;
@@ -557,7 +604,10 @@
       if (!name) name = "Item";
       var qty = entry.qty || 1;
       var baseCost = cartCost(rw);
-      if (entry.mode === "sell") selling.push("- " + name + " x(" + qty + ") +" + toPriceText((baseCost * qty) / 2));
+      if (rw && rw._isNoValue) {
+        if (entry.mode === "sell") selling.push("- " + name + " x(" + qty + ") +No Value");
+        else buying.push("- " + name + " x(" + qty + ") -No Value");
+      } else if (entry.mode === "sell") selling.push("- " + name + " x(" + qty + ") +" + toPriceText((baseCost * qty) / 2));
       else buying.push("- " + name + " x(" + qty + ") -" + toPriceText(baseCost * qty));
     }
     var out = [];
@@ -570,6 +620,7 @@
     cartList.innerHTML = "";
     var ids = Object.keys(cart);
     var sum = 0;
+    var hasNoValue = false;
     for (var i = 0; i < ids.length; i++) {
       var id = ids[i];
       var entry = normalizeCartEntry(id, cart[id]);
@@ -580,6 +631,7 @@
       if (!name) name = "Item";
       var qty = entry.qty || 1;
       var mode = entry.mode === "sell" ? "sell" : "buy";
+      if (rw && rw._isNoValue) hasNoValue = true;
       var lineTotal = (mode === "sell" ? -cartCost(rw) / 2 : cartCost(rw)) * qty;
       sum += lineTotal;
       var li = document.createElement("li");
@@ -591,7 +643,10 @@
       title.textContent = name + " × " + qty;
       var meta = document.createElement("p");
       meta.className = "loot-cart-item-meta";
-      meta.textContent = (mode === "sell" ? "Selling" : "Buying") + " · " + (mode === "sell" ? "+" : "-") + toPriceText(Math.abs(lineTotal)) + " gp";
+      meta.textContent =
+        rw && rw._isNoValue
+          ? (mode === "sell" ? "Selling" : "Buying") + " · No Value"
+          : (mode === "sell" ? "Selling" : "Buying") + " · " + (mode === "sell" ? "+" : "-") + toPriceText(Math.abs(lineTotal)) + " gp";
       info.appendChild(title);
       info.appendChild(meta);
       var controls = document.createElement("div");
@@ -643,6 +698,7 @@
       cartList.appendChild(li);
     }
     cartTotalEl.textContent = toPriceText(sum);
+    if (cartNoValueWarningEl) cartNoValueWarningEl.hidden = !hasNoValue;
     if (checkoutWrap && checkoutOutput) {
       checkoutOutput.value = buildCheckoutMarkdown(ids);
       checkoutWrap.hidden = !checkoutOutput.value;
@@ -657,22 +713,25 @@
       showError("Enter a valid budget (0 or more gold pieces).");
       return;
     }
-    setStatus("Loading spreadsheet…");
+    setStatus("Loading loot sources…");
     searchBtn.disabled = true;
     if (showAllBtn) showAllBtn.disabled = true;
-    loadWorkbook()
-      .then(function (wb) {
+    Promise.all([loadWorkbook(), loadAvraeItems()])
+      .then(function (loaded) {
+        var wb = loaded[0];
+        var avraeItems = loaded[1];
         var built = buildRowsFromSheet(wb);
         headers = built.headers;
         costKey = built.costKey;
         nameKey = findNameKey(headers);
         if (!costKey) throw new Error('No "Cost (GP)" column found in the first row of the sheet.');
         var ck = costKey;
-        budgetFiltered = built.rows.filter(function (row) {
+        var sheetRows = built.rows.filter(function (row) {
           var c = parseCost(row[ck]);
           if (isNaN(c)) return false;
           return showAll || c <= budget;
         });
+        budgetFiltered = sheetRows.concat(buildAvraeRows(avraeItems || []));
         setupDisplayKeys();
         expandedRows = {};
         page = 1;

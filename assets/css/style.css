@@ -1059,6 +1059,15 @@ small {
   font-size: 1.05rem;
 }
 
+.loot-cart-novalue-warning {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.35rem;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
 .loot-cart-buttons {
   display: flex;
   flex-wrap: wrap;
