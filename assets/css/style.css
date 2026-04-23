@@ -89,6 +89,27 @@ body {
   font-size: 1rem;
 }
 
+.brand-home-btn {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.brand-home-btn:hover,
+.brand-home-btn:focus-visible {
+  color: var(--parchment);
+  text-shadow: 0 0 18px rgba(201, 162, 39, 0.45);
+}
+
+.brand-home-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
 .tabs {
   display: flex;
   flex-wrap: wrap;
@@ -126,6 +147,65 @@ main {
   padding: clamp(1rem, 3vw, 2rem);
   max-width: 52rem;
   margin: 0 auto 3rem;
+}
+
+.landing-head {
+  text-align: center;
+}
+
+.landing-kicker {
+  margin: 0;
+  font-family: "Cinzel", serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--parchment-muted);
+  font-size: 0.85rem;
+}
+
+.landing-card {
+  padding: clamp(1rem, 3vw, 1.75rem);
+}
+
+.landing-grid {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+}
+
+.landing-tile {
+  text-align: left;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 162, 39, 0.28);
+  background: linear-gradient(160deg, rgba(61, 47, 74, 0.65), rgba(12, 10, 15, 0.85));
+  color: var(--parchment);
+  cursor: pointer;
+  transition: transform 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease;
+}
+
+.landing-tile:hover,
+.landing-tile:focus-visible {
+  border-color: var(--gold);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+.landing-tile:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.landing-tile h3 {
+  margin: 0 0 0.2rem;
+  font-family: "Cinzel", serif;
+  color: var(--gold);
+  font-size: 1.05rem;
+}
+
+.landing-tile p {
+  margin: 0;
+  color: var(--parchment-muted);
+  font-size: 0.96rem;
 }
 
 body.tab-wide main {
