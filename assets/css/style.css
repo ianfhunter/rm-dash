@@ -1168,6 +1168,36 @@ small {
   overflow: hidden;
 }
 
+.avrae-subtabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.avrae-subtab {
+  font-family: "Cinzel", serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 162, 39, 0.35);
+  background: rgba(42, 31, 53, 0.6);
+  color: var(--parchment-muted);
+  cursor: pointer;
+}
+
+.avrae-subtab.is-active {
+  color: var(--ink);
+  background: linear-gradient(180deg, var(--gold), #a6841c);
+  border-color: var(--gold);
+  box-shadow: 0 0 24px rgba(201, 162, 39, 0.35);
+}
+
+.avrae-frame-hint {
+  margin: 1rem 1rem 0;
+}
+
 .avrae-frame {
   display: block;
   width: 100%;
