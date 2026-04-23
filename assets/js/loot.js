@@ -33,6 +33,7 @@
   var cart = {};
   var nameKey = "";
   var expandedRows = {};
+  var hasAutoLoadedLoot = false;
   var displayKeys = { name: "", type: "", cost: "", attunement: "", a: "", artLink: "", cardLink: "", majorMinor: "", notes: "" };
 
   function showError(msg) {
@@ -737,6 +738,12 @@
       });
   }
 
+  function autoLoadLootOnTabOpen() {
+    if (hasAutoLoadedLoot) return;
+    hasAutoLoadedLoot = true;
+    runSearch({ showAll: true });
+  }
+
   searchBtn.addEventListener("click", function () {
     runSearch({ showAll: false });
   });
@@ -745,6 +752,9 @@
       runSearch({ showAll: true });
     });
   }
+  window.addEventListener("rmtools-tab", function (evt) {
+    if (evt && evt.detail && evt.detail.tab === "loot") autoLoadLootOnTabOpen();
+  });
   if (typeFilterEl) {
     typeFilterEl.addEventListener("change", function () {
       page = 1;
@@ -774,5 +784,6 @@
 
   loadCart();
   renderCart();
-  setStatus("Enter a budget and choose Search to load the catalog from the spreadsheet.");
+  setStatus("Open the Loot tab to auto-load the catalog, or enter a budget and choose Search.");
+  if (document.getElementById("panel-loot") && !document.getElementById("panel-loot").hidden) autoLoadLootOnTabOpen();
 })();
