@@ -110,10 +110,6 @@ body {
   border-radius: 6px;
 }
 
-body.is-home .tabs {
-  display: none;
-}
-
 .tabs {
   display: flex;
   flex-wrap: wrap;
@@ -204,13 +200,6 @@ main {
   font-family: "Cinzel", serif;
   color: var(--gold);
   font-size: 1.05rem;
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.landing-tile-icon {
-  filter: drop-shadow(0 0 8px rgba(201, 162, 39, 0.25));
 }
 
 .landing-tile p {
