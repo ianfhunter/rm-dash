@@ -17,12 +17,12 @@
     <div class="brand">
       <span class="brand-icon" aria-hidden="true" style="padding-bottom: 28px;">🪶</span>
       <div class="brand-text">
-        <h1>Raven's Mark Tools</h1>
+        <h1><button type="button" class="brand-home-btn" id="brand-home" aria-label="Return to landing page">Raven's Mark Tools</button></h1>
         <p class="tagline">CAW! CAW! CAW!</p>
       </div>
     </div>
     <nav class="tabs" role="tablist" aria-label="Tools">
-      <button type="button" class="tab is-active" role="tab" id="tab-boopsum" aria-selected="true" aria-controls="panel-boopsum" data-tab="boopsum">BoopSum</button>
+      <button type="button" class="tab" role="tab" id="tab-boopsum" aria-selected="false" aria-controls="panel-boopsum" data-tab="boopsum">BoopSum</button>
       <button type="button" class="tab" role="tab" id="tab-loot" aria-selected="false" aria-controls="panel-loot" data-tab="loot">Loot</button>
       <button type="button" class="tab" role="tab" id="tab-staff" aria-selected="false" aria-controls="panel-staff" data-tab="staff">Staff Points</button>
       <button type="button" class="tab" role="tab" id="tab-questinfo" aria-selected="false" aria-controls="panel-questinfo" data-tab="questinfo">Quest Info</button>
@@ -32,7 +32,46 @@
   </header>
 
   <main>
-    <section id="panel-boopsum" class="panel is-active" role="tabpanel" aria-labelledby="tab-boopsum">
+
+    <section id="panel-home" class="panel is-active">
+      <div class="panel-inner">
+        <header class="panel-head landing-head">
+          <h2>Tool Catalogue</h2>
+          <p class="lede">A set of tools for both DMs (mainly) and players.</p>
+        </header>
+
+        <div class="card landing-card">
+          <div class="landing-grid">
+            <button type="button" class="landing-tile" data-open-tab="boopsum">
+              <h3><span class="landing-tile-icon" aria-hidden="true">🧮</span>BoopSum</h3>
+              <p>Determine XP, gold, and loot reward budgets after your quest.</p>
+            </button>
+            <button type="button" class="landing-tile" data-open-tab="loot">
+              <h3><span class="landing-tile-icon" aria-hidden="true">💰Fantasy CostCo (Loot Search)</span></h3>
+              <p>Find loot to give your players, find things to spend your money on.</p>
+            </button>
+            <button type="button" class="landing-tile" data-open-tab="staff">
+              <h3><span class="landing-tile-icon" aria-hidden="true">🪶</span>Staff Points</h3>
+              <p>Check what staff rewards you are ready to redeem.</p>
+            </button>
+            <button type="button" class="landing-tile" data-open-tab="questinfo">
+              <h3><span class="landing-tile-icon" aria-hidden="true">📜</span>Quest Posting Creator</h3>
+              <p>A quick builder to set up your quest posting.</p>
+            </button>
+            <button type="button" class="landing-tile" data-open-tab="avrae">
+              <h3><span class="landing-tile-icon" aria-hidden="true">🧠</span>Avrae Assistants</h3>
+              <p>Visually build avrae commands, combats, etc.</p>
+            </button>
+            <button type="button" class="landing-tile" data-open-tab="links">
+              <h3><span class="landing-tile-icon" aria-hidden="true">🗺️</span>Useful Links</h3>
+              <p>Quick references, utilities, and RM resources.</p>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="panel-boopsum" class="panel" role="tabpanel" aria-labelledby="tab-boopsum" hidden>
       <div class="panel-inner">
         <header class="panel-head">
           <h2>BoopSum</h2>
