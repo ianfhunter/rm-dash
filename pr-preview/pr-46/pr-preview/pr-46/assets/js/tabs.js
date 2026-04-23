@@ -14,7 +14,6 @@
 
   function activate(name) {
     document.body.classList.toggle('tab-wide', name === 'loot' || name === 'avrae');
-    document.body.classList.toggle('is-home', name === 'home');
     tabs.forEach(function (btn) {
       var on = btn.dataset.tab === name;
       btn.classList.toggle('is-active', on);
