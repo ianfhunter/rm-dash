@@ -197,8 +197,8 @@
                   <span>Budget (GP)</span>
                   <input type="number" id="loot-budget" min="0" step="1" placeholder="e.g. 500" />
                 </label>
-                <button type="button" class="btn primary" id="loot-search">Search within budget</button>
-                <button type="button" class="btn ghost" id="loot-show-all">Show all</button>
+                <button type="button" class="btn primary" id="loot-search">Filter for Budget</button>
+                <button type="button" class="btn ghost" id="loot-show-all">Remove Budget Filter</button>
               </div>
               <div class="loot-filter-row">
                 <label class="field loot-filter-field">
@@ -227,7 +227,6 @@
                   </select>
                 </label>
               </div>
-              <p class="hint loot-hint">Given a GP budget, returns affordable items.</p>
               <div id="loot-status" class="loot-status" role="status" aria-live="polite"></div>
               <div id="loot-error" class="alert error" hidden></div>
             </div>
