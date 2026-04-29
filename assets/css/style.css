@@ -918,6 +918,17 @@ small {
   min-width: 0;
 }
 
+.loot-filter-toggle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.loot-filter-toggle span {
+  margin: 0;
+}
+
 .loot-status {
   margin-top: 0.75rem;
   font-size: 1rem;
