@@ -286,12 +286,6 @@
     renderRewards(null);
   });
 
-  window.addEventListener("rmtools-tab", function (ev) {
-    if (ev.detail && ev.detail.tab === "staff" && !statusEl.textContent) {
-      setStatus("Enter your roster username and choose Look up.");
-    }
-  });
-
   renderRewards(null);
   setStatus("Enter your roster username and choose Look up.");
 })();
