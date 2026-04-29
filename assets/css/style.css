@@ -52,11 +52,80 @@ body {
 }
 
 .site-header {
+  position: relative;
   padding: 1.25rem clamp(1rem, 4vw, 2.5rem);
   border-bottom: 1px solid rgba(201, 162, 39, 0.25);
   background: linear-gradient(180deg, rgba(22, 18, 28, 0.95), rgba(12, 10, 15, 0.85));
   backdrop-filter: blur(8px);
   text-align: center;
+}
+
+.mode-toggle-wrap {
+  position: absolute;
+  top: 1rem;
+  right: clamp(1rem, 4vw, 2.5rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mode-label {
+  font-size: 0.85rem;
+  color: var(--parchment-muted);
+  letter-spacing: 0.04em;
+}
+
+.mode-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+}
+
+.mode-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.mode-switch-label {
+  color: var(--parchment-muted);
+}
+
+.mode-switch-ui {
+  width: 2.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 162, 39, 0.45);
+  background: rgba(42, 31, 53, 0.8);
+  position: relative;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.mode-switch-ui::after {
+  content: "";
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 50%;
+  background: var(--parchment);
+  transition: transform 0.2s ease;
+}
+
+.mode-switch input:checked + .mode-switch-ui::after {
+  transform: translateX(0.95rem);
+}
+
+body.mode-dm .mode-switch-label:last-child,
+body.mode-player .mode-switch-label:first-child {
+  color: var(--gold);
+}
+
+body.mode-player .dm-only {
+  display: none !important;
 }
 
 .brand {
