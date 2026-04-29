@@ -14,15 +14,6 @@
 <body>
   <div class="page-bg" aria-hidden="true"></div>
   <header class="site-header">
-    <div class="mode-toggle-wrap">
-      <span class="mode-label">Mode:</span>
-      <label class="mode-switch" for="mode-toggle">
-        <span class="mode-switch-label">Player</span>
-        <input type="checkbox" id="mode-toggle" aria-label="Toggle between Player mode and DM mode" />
-        <span class="mode-switch-ui" aria-hidden="true"></span>
-        <span class="mode-switch-label">DM</span>
-      </label>
-    </div>
     <div class="brand">
       <button type="button" class="brand-icon-btn" id="brand-blast" aria-label="Celebrate with feather and raven emojis">
         <span class="brand-icon" aria-hidden="true" style="padding-bottom: 28px;">🪶</span>
@@ -33,10 +24,10 @@
       </div>
     </div>
     <nav class="tabs" role="tablist" aria-label="Tools">
-      <button type="button" class="tab dm-only" role="tab" id="tab-boopsum" aria-selected="false" aria-controls="panel-boopsum" data-tab="boopsum">BoopSum</button>
+      <button type="button" class="tab" role="tab" id="tab-boopsum" aria-selected="false" aria-controls="panel-boopsum" data-tab="boopsum">BoopSum</button>
       <button type="button" class="tab" role="tab" id="tab-loot" aria-selected="false" aria-controls="panel-loot" data-tab="loot">Loot</button>
-      <button type="button" class="tab dm-only" role="tab" id="tab-staff" aria-selected="false" aria-controls="panel-staff" data-tab="staff">Staff Points</button>
-      <button type="button" class="tab dm-only" role="tab" id="tab-questinfo" aria-selected="false" aria-controls="panel-questinfo" data-tab="questinfo">Quest Info</button>
+      <button type="button" class="tab" role="tab" id="tab-staff" aria-selected="false" aria-controls="panel-staff" data-tab="staff">Staff Points</button>
+      <button type="button" class="tab" role="tab" id="tab-questinfo" aria-selected="false" aria-controls="panel-questinfo" data-tab="questinfo">Quest Info</button>
       <button type="button" class="tab" role="tab" id="tab-questnotes" aria-selected="false" aria-controls="panel-questnotes" data-tab="questnotes">Quest Notes</button>
       <button type="button" class="tab" role="tab" id="tab-avrae" aria-selected="false" aria-controls="panel-avrae" data-tab="avrae">Avrae</button>
       <button type="button" class="tab" role="tab" id="tab-links" aria-selected="false" aria-controls="panel-links" data-tab="links">Useful Links</button>
@@ -54,7 +45,7 @@
 
         <div class="card landing-card">
           <div class="landing-grid">
-            <button type="button" class="landing-tile dm-only" data-open-tab="boopsum">
+            <button type="button" class="landing-tile" data-open-tab="boopsum">
               <h3><span class="landing-tile-icon" aria-hidden="true">🧮</span>BoopSum</h3>
               <p>Determine XP, gold, and loot reward budgets after your quest.</p>
             </button>
@@ -62,11 +53,11 @@
               <h3><span class="landing-tile-icon" aria-hidden="true">💰Fantasy CostCo (Loot Search)</span></h3>
               <p>Find loot to give your players, find things to spend your money on.</p>
             </button>
-            <button type="button" class="landing-tile dm-only" data-open-tab="staff">
+            <button type="button" class="landing-tile" data-open-tab="staff">
               <h3><span class="landing-tile-icon" aria-hidden="true">🪶</span>Staff Points</h3>
               <p>Check what staff rewards you are ready to redeem.</p>
             </button>
-            <button type="button" class="landing-tile dm-only" data-open-tab="questinfo">
+            <button type="button" class="landing-tile" data-open-tab="questinfo">
               <h3><span class="landing-tile-icon" aria-hidden="true">📜</span>Quest Posting Creator</h3>
               <p>A quick builder to set up your quest posting.</p>
             </button>
@@ -497,6 +488,7 @@
           <h4>General</h4>
           <ul>
             <li><a href="https://ravensmark.fandom.com/">RM Wiki</a></li>
+            <li><a href="http://bit.ly/RM-DMG">RM DMG</a></li>
           </ul>
           <h4>Scheduling</h4>
           <ul>
@@ -532,8 +524,8 @@
           <ul>
             <li><a href="https://critterdb.com/">CritterDB</a></li>
           </ul>
-          <h4 class="dm-only">DM Bookkeeping + RM Resources</h4>
-          <ul class="dm-only">
+          <h4>DM Bookkeeping + RM Resources</h4>
+          <ul>
             <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSepo4jpf1erZlceIbjkeeeKjU-Bma4J3hNcbe7dGfUEN0D4Vw/viewform?usp=header" target="_blank" rel="noopener noreferrer">Staff Point Request Form</a></li>
             <li><a href="https://spark-lamprey-fd4.notion.site/Raven-s-Mark-Dungeon-Master-Guide-94108bc3eba24e5685c2e26a25bb0f36">RM DMG</a></li>
           </ul>

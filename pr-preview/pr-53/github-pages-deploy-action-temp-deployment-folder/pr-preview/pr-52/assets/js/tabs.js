@@ -1,9 +1,7 @@
 (function () {
   var tabs = document.querySelectorAll('.tab');
-  var modeToggle = document.getElementById('mode-toggle');
   var brandHome = document.getElementById('brand-home');
   var landingTiles = document.querySelectorAll('[data-open-tab]');
-  var dmOnlyPanels = ['boopsum', 'staff', 'questinfo'];
   var panels = {
     home: document.getElementById('panel-home'),
     boopsum: document.getElementById('panel-boopsum'),
@@ -16,9 +14,6 @@
   };
 
   function activate(name) {
-    if (document.body.classList.contains('mode-player') && dmOnlyPanels.indexOf(name) !== -1) {
-      name = 'home';
-    }
     document.body.classList.toggle('tab-wide', name === 'loot' || name === 'avrae');
     document.body.classList.toggle('is-home', name === 'home');
     tabs.forEach(function (btn) {
@@ -34,16 +29,6 @@
       panel.hidden = !on;
     });
     window.dispatchEvent(new CustomEvent('rmtools-tab', { detail: { tab: name } }));
-  }
-
-  function applyMode(isDm) {
-    document.body.classList.toggle('mode-dm', isDm);
-    document.body.classList.toggle('mode-player', !isDm);
-    if (modeToggle) modeToggle.checked = isDm;
-    if (!isDm) {
-      var activeDmTab = document.querySelector('.tab.is-active.dm-only');
-      if (activeDmTab) activate('home');
-    }
   }
 
   tabs.forEach(function (btn) {
@@ -64,12 +49,5 @@
     });
   });
 
-  if (modeToggle) {
-    modeToggle.addEventListener('change', function () {
-      applyMode(modeToggle.checked);
-    });
-  }
-
-  applyMode(false);
   activate('home');
 })();
