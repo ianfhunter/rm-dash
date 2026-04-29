@@ -287,5 +287,4 @@
   });
 
   renderRewards(null);
-  setStatus("Enter your roster username and choose Look up.");
 })();
