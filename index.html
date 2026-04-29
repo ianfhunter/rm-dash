@@ -28,6 +28,7 @@
       <button type="button" class="tab" role="tab" id="tab-loot" aria-selected="false" aria-controls="panel-loot" data-tab="loot">Loot</button>
       <button type="button" class="tab" role="tab" id="tab-staff" aria-selected="false" aria-controls="panel-staff" data-tab="staff">Staff Points</button>
       <button type="button" class="tab" role="tab" id="tab-questinfo" aria-selected="false" aria-controls="panel-questinfo" data-tab="questinfo">Quest Info</button>
+      <button type="button" class="tab" role="tab" id="tab-questnotes" aria-selected="false" aria-controls="panel-questnotes" data-tab="questnotes">Quest Notes</button>
       <button type="button" class="tab" role="tab" id="tab-avrae" aria-selected="false" aria-controls="panel-avrae" data-tab="avrae">Avrae</button>
       <button type="button" class="tab" role="tab" id="tab-links" aria-selected="false" aria-controls="panel-links" data-tab="links">Useful Links</button>
     </nav>
@@ -60,6 +61,10 @@
               <h3><span class="landing-tile-icon" aria-hidden="true">📜</span>Quest Posting Creator</h3>
               <p>A quick builder to set up your quest posting.</p>
             </button>
+            <button type="button" class="landing-tile" data-open-tab="questnotes">
+              <h3><span class="landing-tile-icon" aria-hidden="true">📝</span>Quest Notes</h3>
+              <p>Track notes per quest with custom headings and saved text.</p>
+            </button>
             <button type="button" class="landing-tile" data-open-tab="avrae">
               <h3><span class="landing-tile-icon" aria-hidden="true">🧠</span>Avrae Assistants</h3>
               <p>Visually build avrae commands, combats, etc.</p>
@@ -68,6 +73,55 @@
               <h3><span class="landing-tile-icon" aria-hidden="true">🗺️</span>Useful Links</h3>
               <p>Quick references, utilities, and RM resources.</p>
             </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="panel-questnotes" class="panel" role="tabpanel" aria-labelledby="tab-questnotes" hidden>
+      <div class="panel-inner">
+        <header class="panel-head">
+          <h2>Quest Notes</h2>
+          <p class="lede">Create quest-specific notes with customizable section headings.</p>
+        </header>
+
+        <div class="card questnotes-controls">
+          <p class="alert warning questnotes-warning"><strong>Local storage warning:</strong> These notes are saved in your browser only. Clearing browser data or switching browsers/devices can remove them.</p>
+          <div class="questnotes-actions-row">
+            <label class="field questnotes-new-quest-field">
+              <span>New quest name</span>
+              <input type="text" id="qn-new-quest-name" placeholder="e.g. Ashes at Emberwatch" />
+            </label>
+            <button type="button" class="btn primary" id="qn-add-quest">Add Quest</button>
+          </div>
+        </div>
+
+        <nav class="questnotes-quest-tabs" id="qn-quest-tabs" aria-label="Quest notes tabs"></nav>
+        <div id="qn-empty" class="card" hidden>
+          <p class="hint">No quests yet. Add one above to begin writing notes.</p>
+        </div>
+        <div id="qn-editor" class="card questnotes-editor" hidden>
+          <div class="questnotes-editor-head">
+            <h3 id="qn-active-quest-title"></h3>
+            <button type="button" class="btn ghost" id="qn-delete-quest">Delete Quest</button>
+          </div>
+          <div class="questnotes-actions-row">
+            <label class="field questnotes-new-heading-field">
+              <span>New heading</span>
+              <input type="text" id="qn-new-heading-name" placeholder="e.g. NPC Clues" />
+            </label>
+            <button type="button" class="btn ghost" id="qn-add-heading">Add Heading</button>
+          </div>
+          <nav class="questnotes-heading-tabs" id="qn-heading-tabs" aria-label="Quest section headings"></nav>
+          <div class="questnotes-text-wrap">
+            <label class="field">
+              <span id="qn-active-heading-title">Notes</span>
+              <textarea id="qn-note-text" rows="12" placeholder="Write notes for this heading..."></textarea>
+            </label>
+            <div class="questnotes-actions-row">
+              <button type="button" class="btn ghost" id="qn-rename-heading">Rename Heading</button>
+              <button type="button" class="btn ghost" id="qn-delete-heading">Delete Heading</button>
+            </div>
           </div>
         </div>
       </div>
@@ -495,6 +549,7 @@
   <script src="assets/js/emoji-blast-trigger.js"></script>
   <script src="assets/js/boopsum.js"></script>
   <script src="assets/js/questinfo.js"></script>
+  <script src="assets/js/questnotes.js"></script>
   <script src="assets/js/staff.js"></script>
   <script src="assets/js/loot.js"></script>
   <script src="assets/js/avrae.js"></script>

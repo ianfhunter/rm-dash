@@ -8,6 +8,7 @@
     loot: document.getElementById('panel-loot'),
     staff: document.getElementById('panel-staff'),
     questinfo: document.getElementById('panel-questinfo'),
+    questnotes: document.getElementById('panel-questnotes'),
     avrae: document.getElementById('panel-avrae'),
     links: document.getElementById('panel-links'),
   };

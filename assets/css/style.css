@@ -1321,3 +1321,60 @@ small {
   border: 0;
   background: rgba(8, 7, 11, 0.92);
 }
+
+.questnotes-warning {
+  margin: 0 0 1rem;
+}
+
+.questnotes-actions-row {
+  display: flex;
+  gap: 0.7rem;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.questnotes-new-quest-field,
+.questnotes-new-heading-field {
+  flex: 1 1 22rem;
+}
+
+.questnotes-quest-tabs,
+.questnotes-heading-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-bottom: 0.85rem;
+}
+
+.questnotes-tab,
+.questnotes-subtab {
+  font-family: "Cinzel", serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 162, 39, 0.35);
+  background: rgba(42, 31, 53, 0.6);
+  color: var(--parchment-muted);
+  cursor: pointer;
+}
+
+.questnotes-tab.is-active,
+.questnotes-subtab.is-active {
+  color: var(--ink);
+  background: linear-gradient(180deg, var(--gold), #a6841c);
+  border-color: var(--gold);
+}
+
+.questnotes-editor-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.85rem;
+}
+
+.questnotes-editor-head h3 {
+  margin: 0;
+}
