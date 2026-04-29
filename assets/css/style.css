@@ -1346,6 +1346,26 @@ small {
   margin-bottom: 0.85rem;
 }
 
+.questnotes-workspace {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.questnotes-editor {
+  padding: 1rem;
+  background: linear-gradient(180deg, rgba(28, 20, 35, 0.9), rgba(17, 12, 22, 0.96));
+  border: 1px solid rgba(201, 162, 39, 0.28);
+}
+
+.questnotes-text-wrap {
+  margin-top: 0.7rem;
+}
+
+.questnotes-text-wrap textarea {
+  min-height: 18rem;
+  line-height: 1.45;
+}
+
 .questnotes-tab,
 .questnotes-subtab {
   font-family: "Cinzel", serif;
@@ -1377,4 +1397,33 @@ small {
 
 .questnotes-editor-head h3 {
   margin: 0;
+}
+
+@media (min-width: 980px) {
+  .questnotes-workspace {
+    grid-template-columns: minmax(16rem, 20rem) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .questnotes-quest-tabs {
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-bottom: 0;
+    position: sticky;
+    top: 1rem;
+    max-height: calc(100vh - 9rem);
+    overflow: auto;
+    padding-right: 0.35rem;
+  }
+
+  .questnotes-tab {
+    width: 100%;
+    text-align: left;
+    padding: 0.55rem 0.9rem;
+  }
+
+  #qn-empty,
+  .questnotes-editor {
+    min-height: 30rem;
+  }
 }
