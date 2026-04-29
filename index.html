@@ -96,31 +96,33 @@
           </div>
         </div>
 
-        <nav class="questnotes-quest-tabs" id="qn-quest-tabs" aria-label="Quest notes tabs"></nav>
-        <div id="qn-empty" class="card" hidden>
-          <p class="hint">No quests yet. Add one above to begin writing notes.</p>
-        </div>
-        <div id="qn-editor" class="card questnotes-editor" hidden>
-          <div class="questnotes-editor-head">
-            <h3 id="qn-active-quest-title"></h3>
-            <button type="button" class="btn ghost" id="qn-delete-quest">Delete Quest</button>
+        <div class="questnotes-workspace">
+          <nav class="questnotes-quest-tabs" id="qn-quest-tabs" aria-label="Quest notes tabs"></nav>
+          <div id="qn-empty" class="card" hidden>
+            <p class="hint">No quests yet. Add one above to begin writing notes.</p>
           </div>
-          <div class="questnotes-actions-row">
-            <label class="field questnotes-new-heading-field">
-              <span>New heading</span>
-              <input type="text" id="qn-new-heading-name" placeholder="e.g. NPC Clues" />
-            </label>
-            <button type="button" class="btn ghost" id="qn-add-heading">Add Heading</button>
-          </div>
-          <nav class="questnotes-heading-tabs" id="qn-heading-tabs" aria-label="Quest section headings"></nav>
-          <div class="questnotes-text-wrap">
-            <label class="field">
-              <span id="qn-active-heading-title">Notes</span>
-              <textarea id="qn-note-text" rows="12" placeholder="Write notes for this heading..."></textarea>
-            </label>
+          <div id="qn-editor" class="card questnotes-editor" hidden>
+            <div class="questnotes-editor-head">
+              <h3 id="qn-active-quest-title"></h3>
+              <button type="button" class="btn ghost" id="qn-delete-quest">Delete Quest</button>
+            </div>
             <div class="questnotes-actions-row">
-              <button type="button" class="btn ghost" id="qn-rename-heading">Rename Heading</button>
-              <button type="button" class="btn ghost" id="qn-delete-heading">Delete Heading</button>
+              <label class="field questnotes-new-heading-field">
+                <span>New heading</span>
+                <input type="text" id="qn-new-heading-name" placeholder="e.g. NPC Clues" />
+              </label>
+              <button type="button" class="btn ghost" id="qn-add-heading">Add Heading</button>
+            </div>
+            <nav class="questnotes-heading-tabs" id="qn-heading-tabs" aria-label="Quest section headings"></nav>
+            <div class="questnotes-text-wrap">
+              <label class="field">
+                <span id="qn-active-heading-title">Notes</span>
+                <textarea id="qn-note-text" rows="12" placeholder="Write notes for this heading..."></textarea>
+              </label>
+              <div class="questnotes-actions-row">
+                <button type="button" class="btn ghost" id="qn-rename-heading">Rename Heading</button>
+                <button type="button" class="btn ghost" id="qn-delete-heading">Delete Heading</button>
+              </div>
             </div>
           </div>
         </div>
