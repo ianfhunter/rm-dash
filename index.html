@@ -59,7 +59,7 @@
             </button>
             <button type="button" class="landing-tile" data-open-tab="loot">
               <h3><span class="landing-tile-icon" aria-hidden="true">💰Fantasy CostCo (Loot Search)</span></h3>
-              <p>Find loot to give your players, find things to spend your money on.</p>
+              <p>Search for loot to give your players or find things to spend your money on.</p>
             </button>
             <button type="button" class="landing-tile dm-only" data-open-tab="staff">
               <h3><span class="landing-tile-icon" aria-hidden="true">🪶</span>Staff Points</h3>
@@ -71,7 +71,7 @@
             </button>
             <button type="button" class="landing-tile" data-open-tab="questnotes">
               <h3><span class="landing-tile-icon" aria-hidden="true">📝</span>Quest Notes</h3>
-              <p>Track notes per quest with custom headings and saved text.</p>
+              <p>A place to make notes for your quest.</p>
             </button>
             <button type="button" class="landing-tile" data-open-tab="avrae">
               <h3><span class="landing-tile-icon" aria-hidden="true">🧠</span>Avrae Assistants</h3>
@@ -90,15 +90,15 @@
       <div class="panel-inner">
         <header class="panel-head">
           <h2>Quest Notes</h2>
-          <p class="lede">Create quest-specific notes with customizable section headings.</p>
+          <p class="lede">Create notes to remember what is going on.</p>
         </header>
 
         <div class="card questnotes-controls">
-          <p class="alert warning questnotes-warning"><strong>Local storage warning:</strong> These notes are saved in your browser only. Clearing browser data or switching browsers/devices can remove them.</p>
+          <p class="alert warning questnotes-warning"><strong>Note:</strong> These notes are saved in the browser. Clearing browser data or switching browsers/devices can remove them.</p>
           <div class="questnotes-actions-row">
             <label class="field questnotes-new-quest-field">
               <span>New quest name</span>
-              <input type="text" id="qn-new-quest-name" placeholder="e.g. Ashes at Emberwatch" />
+              <input type="text" id="qn-new-quest-name" placeholder="e.g. Spudborne's Lament" />
             </label>
             <button type="button" class="btn primary" id="qn-add-quest">Add Quest</button>
           </div>
@@ -116,8 +116,8 @@
             </div>
             <div class="questnotes-actions-row">
               <label class="field questnotes-new-heading-field">
-                <span>New heading</span>
-                <input type="text" id="qn-new-heading-name" placeholder="e.g. NPC Clues" />
+                <span>New tab</span>
+                <input type="text" id="qn-new-heading-name" placeholder="e.g. Story So Far" />
               </label>
               <button type="button" class="btn ghost" id="qn-add-heading">Add Heading</button>
             </div>
@@ -125,11 +125,11 @@
             <div class="questnotes-text-wrap">
               <label class="field">
                 <span id="qn-active-heading-title">Notes</span>
-                <textarea id="qn-note-text" rows="12" placeholder="Write notes for this heading..."></textarea>
+                <textarea id="qn-note-text" rows="12" placeholder="Write some notes..."></textarea>
               </label>
               <div class="questnotes-actions-row">
-                <button type="button" class="btn ghost" id="qn-rename-heading">Rename Heading</button>
-                <button type="button" class="btn ghost" id="qn-delete-heading">Delete Heading</button>
+                <button type="button" class="btn ghost" id="qn-rename-heading">Rename Tab</button>
+                <button type="button" class="btn ghost" id="qn-delete-heading">Delete Tab</button>
               </div>
             </div>
           </div>
@@ -173,7 +173,6 @@
             <h3>Party</h3>
             <button type="button" class="btn ghost" id="add-player">Add player</button>
           </div>
-          <p class="hint">One row per adventurer: character name, player name, and level. The mark beside the row reflects their Raven&rsquo;s Mark tier.</p>
           <div id="player-rows" class="player-rows"></div>
         </div>
 
